@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "uOlkj_hlROUJZlHclttj5"
+uri = "file://artifacts/birthday-surprise/src/assets/images/velvet-bg.png"
+type = "image"
+title = "Burgundy velvet background"
+
+[[generated]]
+id = "x3NzHjqYw_wn0c5HPt529"
+uri = "file://artifacts/birthday-surprise/src/assets/images/petals-bg.png"
+type = "image"
+title = "Rose petals background"
