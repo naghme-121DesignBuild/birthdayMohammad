@@ -158,10 +158,12 @@ export default function Home() {
       <AnimatePresence>
         {!isOpen && !showVideo && (
           <motion.div
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-filmBlack px-4 film-vignette"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-filmBlack px-4"
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
           >
+            {/* vignette as its own non-interactive layer */}
+            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(circle, transparent 50%, rgba(10,0,4,0.8) 100%)" }} />
             <div className="relative z-10 flex flex-col items-center text-center">
               <span className="font-ui text-xs tracking-[0.4em] text-filmGold/60 mb-6 uppercase">
                 A private film by {SENDER_NAME}
