@@ -216,7 +216,7 @@ export default function Home() {
       <AnimatePresence>
         {showVideo && !isOpen && (
           <motion.div
-            className="fixed inset-0 z-40 bg-filmBlack flex flex-col items-center justify-center"
+            className="fixed inset-0 z-[60] bg-filmBlack flex flex-col items-center justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -267,7 +267,7 @@ export default function Home() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, delay: 0.5 }}
+                      transition={{ duration: 0.4, delay: 0 }}
                       onClick={handlePlayVideo}
                     >
                       <motion.div
