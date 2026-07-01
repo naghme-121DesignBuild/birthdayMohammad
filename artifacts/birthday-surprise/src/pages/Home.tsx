@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import ScrollProgress from "@/components/ScrollProgress";
@@ -52,25 +52,86 @@ function SceneLabel({ children }: { children: React.ReactNode }) {
 export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpening, setIsOpening] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
+  const [transitioning, setTransitioning] = useState(false);
   const [secretOpen, setSecretOpen] = useState(false);
-  const [heroVideoError, setHeroVideoError] = useState(false);
+  const [introVideoError, setIntroVideoError] = useState(false);
+  const introVideoRef = useRef<HTMLVideoElement>(null);
 
   const handleOpen = () => {
     setIsOpening(true);
     setTimeout(() => {
-      setIsOpen(true);
-      window.scrollTo(0, 0);
-    }, 1500);
+      setShowVideo(true);
+    }, 1200);
   };
+
+  const triggerTransition = useCallback(() => {
+    setTransitioning(true);
+    setTimeout(() => {
+      setIsOpen(true);
+      setShowVideo(false);
+      window.scrollTo(0, 0);
+    }, 900);
+    setTimeout(() => {
+      setTransitioning(false);
+    }, 2000);
+  }, []);
 
   return (
     <div className="min-h-[100dvh] bg-filmBg text-filmIvory font-body overflow-x-hidden relative film-grain">
       <ScrollProgress />
       {isOpen && <MusicToggle />}
 
+      {/* GOLD SPARK TRANSITION OVERLAY */}
+      <AnimatePresence>
+        {transitioning && (
+          <motion.div
+            className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.1, ease: "easeInOut" }}
+          >
+            {/* Dark base */}
+            <div className="absolute inset-0 bg-filmBlack" />
+            {/* Gold radial bloom */}
+            <motion.div
+              className="absolute inset-0"
+              style={{
+                background: "radial-gradient(ellipse 60% 60% at 50% 50%, rgba(212,175,55,0.55) 0%, rgba(212,175,55,0.12) 50%, transparent 80%)",
+              }}
+              initial={{ opacity: 0, scale: 0.7 }}
+              animate={{ opacity: [0, 1, 0.6, 0] }}
+              transition={{ duration: 1.8, times: [0, 0.25, 0.6, 1], ease: "easeInOut" }}
+            />
+            {/* Spark particles */}
+            {Array.from({ length: 14 }).map((_, i) => {
+              const angle = (i / 14) * 360;
+              const dist = 80 + (i % 3) * 60;
+              const size = 2 + (i % 4);
+              return (
+                <motion.div
+                  key={i}
+                  className="absolute rounded-full bg-filmSoftGold"
+                  style={{ width: size, height: size }}
+                  initial={{ x: 0, y: 0, opacity: 0 }}
+                  animate={{
+                    x: Math.cos((angle * Math.PI) / 180) * dist,
+                    y: Math.sin((angle * Math.PI) / 180) * dist,
+                    opacity: [0, 1, 0],
+                    scale: [0.5, 1.5, 0],
+                  }}
+                  transition={{ duration: 1.1, delay: 0.1 + i * 0.03, ease: "easeOut" }}
+                />
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* SECTION 0: Opening Title */}
       <AnimatePresence>
-        {!isOpen && (
+        {!isOpen && !showVideo && (
           <motion.div
             className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-filmBlack px-4 film-vignette"
             exit={{ opacity: 0 }}
@@ -126,21 +187,69 @@ export default function Home() {
         )}
       </AnimatePresence>
 
+      {/* FULLSCREEN INTRO VIDEO (between title card and main film) */}
+      <AnimatePresence>
+        {showVideo && !isOpen && (
+          <motion.div
+            className="fixed inset-0 z-40 bg-filmBlack flex flex-col items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            {introVideoError ? (
+              /* Missing file — elegant placeholder + auto-proceed */
+              <motion.div
+                className="flex flex-col items-center gap-6 px-8 text-center"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <div className="w-full max-w-lg aspect-video border border-filmGold/30 rounded flex items-center justify-center bg-filmBg2 text-filmGold/40 font-ui tracking-widest text-sm uppercase">
+                  Opening film coming soon
+                </div>
+                <button
+                  onClick={triggerTransition}
+                  className="px-8 py-3 border border-filmGold text-filmGold font-ui tracking-[0.2em] text-sm uppercase hover:bg-filmGold hover:text-filmBlack transition-colors duration-500 rounded-sm focus:outline-none"
+                  aria-label="Continue to film"
+                  data-testid="btn-skip-video"
+                >
+                  Continue ▶
+                </button>
+              </motion.div>
+            ) : (
+              <div className="relative w-full h-full">
+                <video
+                  ref={introVideoRef}
+                  src="/assets/videos/opening.mp4"
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-cover"
+                  onEnded={triggerTransition}
+                  onError={() => setIntroVideoError(true)}
+                  data-testid="video-intro"
+                />
+                {/* Vignette overlay */}
+                <div className="absolute inset-0 pointer-events-none film-vignette" />
+                {/* Skip button — unobtrusive, bottom right */}
+                <button
+                  onClick={triggerTransition}
+                  className="absolute bottom-6 right-6 px-4 py-2 border border-filmIvory/20 text-filmIvory/40 hover:text-filmIvory hover:border-filmIvory/60 font-ui text-xs tracking-widest uppercase transition-all duration-400 rounded-sm focus:outline-none"
+                  aria-label="Skip intro video"
+                  data-testid="btn-skip-intro"
+                >
+                  Skip ›
+                </button>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {isOpen && (
         <main className="w-full">
           {/* SECTION 1: Hero */}
           <section className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden px-4 film-vignette bg-gradient-to-b from-[#4a0d1c] to-filmBg">
-            {!heroVideoError && (
-              <video
-                src="/assets/videos/opening.mp4"
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay"
-                onError={() => setHeroVideoError(true)}
-              />
-            )}
             
             <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
               {Array.from({ length: 7 }).map((_, i) => (
