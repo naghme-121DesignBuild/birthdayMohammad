@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import ScrollProgress from "@/components/ScrollProgress";
@@ -56,6 +56,7 @@ export default function Home() {
   const [transitioning, setTransitioning] = useState(false);
   const [secretOpen, setSecretOpen] = useState(false);
   const [introVideoError, setIntroVideoError] = useState(false);
+  const [videoMuted, setVideoMuted] = useState(true);
   const introVideoRef = useRef<HTMLVideoElement>(null);
 
   const handleOpen = () => {
@@ -63,6 +64,19 @@ export default function Home() {
     setTimeout(() => {
       setShowVideo(true);
     }, 1200);
+  };
+
+  useEffect(() => {
+    if (!showVideo || !introVideoRef.current) return;
+    const vid = introVideoRef.current;
+    vid.muted = true;
+    vid.play().catch(() => {});
+  }, [showVideo]);
+
+  const handleUnmute = () => {
+    if (!introVideoRef.current) return;
+    introVideoRef.current.muted = false;
+    setVideoMuted(false);
   };
 
   const triggerTransition = useCallback(() => {
@@ -223,6 +237,7 @@ export default function Home() {
                   ref={introVideoRef}
                   src="/assets/videos/opening.mp4"
                   autoPlay
+                  muted
                   playsInline
                   className="w-full h-full object-cover"
                   onEnded={triggerTransition}
@@ -231,10 +246,28 @@ export default function Home() {
                 />
                 {/* Vignette overlay */}
                 <div className="absolute inset-0 pointer-events-none film-vignette" />
+                {/* Unmute button — appears while muted */}
+                <AnimatePresence>
+                  {videoMuted && (
+                    <motion.button
+                      onClick={handleUnmute}
+                      className="absolute bottom-6 left-6 flex items-center gap-2 px-4 py-2 border border-filmGold/50 text-filmGold/80 hover:text-filmGold hover:border-filmGold bg-filmBlack/60 backdrop-blur-sm font-ui text-xs tracking-widest uppercase transition-all duration-300 rounded-sm focus:outline-none"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      transition={{ delay: 0.8, duration: 0.5 }}
+                      aria-label="Enable sound"
+                      data-testid="btn-unmute"
+                    >
+                      <span>🔇</span>
+                      <span>Tap for sound</span>
+                    </motion.button>
+                  )}
+                </AnimatePresence>
                 {/* Skip button — unobtrusive, bottom right */}
                 <button
                   onClick={triggerTransition}
-                  className="absolute bottom-6 right-6 px-4 py-2 border border-filmIvory/20 text-filmIvory/40 hover:text-filmIvory hover:border-filmIvory/60 font-ui text-xs tracking-widest uppercase transition-all duration-400 rounded-sm focus:outline-none"
+                  className="absolute bottom-6 right-6 px-4 py-2 border border-filmIvory/20 text-filmIvory/40 hover:text-filmIvory hover:border-filmIvory/60 font-ui text-xs tracking-widest uppercase transition-all duration-300 rounded-sm focus:outline-none"
                   aria-label="Skip intro video"
                   data-testid="btn-skip-intro"
                 >
