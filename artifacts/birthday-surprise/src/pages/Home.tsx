@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import velvetBg from "@/assets/images/velvet-bg.png";
 import petalsBg from "@/assets/images/petals-bg.png";
 import photo1 from "@assets/IMG_7533_1782879356200.PNG";
@@ -9,123 +9,141 @@ import photo4 from "@assets/IMG_7543_1782879356204.PNG";
 import photo5 from "@assets/IMG_7544_1782879356205.PNG";
 
 const reasons = [
-  "The way your eyes light up when you talk about what you love.",
-  "Your quiet strength that makes me feel safe every single day.",
-  "How you always know exactly what to say to make me smile.",
-  "The beautiful, gentle way you treat everyone around you.",
-  "Your laugh — it is my absolute favorite sound in the world.",
-  "The fact that even in silence, I feel completely understood by you.",
-  "Your ambition and the passionate way you chase your dreams.",
-  "Simply because you are you. There is no one else like you, Mohammad."
+  { num: "I", text: "The way your eyes carry the whole universe in them — calm, deep, endlessly kind." },
+  { num: "II", text: "How you turn ordinary moments into something I want to remember forever." },
+  { num: "III", text: "The sound of your voice — it has always felt like coming home." },
+  { num: "IV", text: "Your strength. You carry so much quietly, and I see every bit of it." },
+  { num: "V", text: "The way distance never once made me love you less — only more." },
+  { num: "VI", text: "How you make me laugh even when I didn't know I needed to." },
+  { num: "VII", text: "Your mind — curious, passionate, brilliant. I could listen to you forever." },
+  { num: "VIII", text: "Because there is simply no one else in the world who is you, Mohammad." },
 ];
 
 const memories = [
   {
     src: photo1,
-    label: "Where it all began",
-    caption: "Different places. One match. A new story.",
-    rotate: "-2deg",
+    title: "Where it began",
+    caption: "Different cities. Different countries. One match that changed everything.",
+    tag: "Toronto & Los Angeles",
   },
   {
     src: photo2,
-    label: "Santa Monica Pier",
-    caption: "California Memories — Route 66 to the end of the trail.",
-    rotate: "1.5deg",
+    title: "Santa Monica Pier",
+    caption: "Route 66 — end of the trail, beginning of us. California Memories.",
+    tag: "California",
   },
   {
     src: photo3,
-    label: "Malibu Beach",
-    caption: "Love was in the air that day. Perfect day.",
-    rotate: "-1deg",
+    title: "Malibu Beach",
+    caption: "Beach + sun + backgammon + you. The perfect day.",
+    tag: "Malibu",
   },
   {
     src: photo4,
-    label: "Petersen Automotive Museum",
-    caption: "A day to remember — legends never die.",
-    rotate: "2deg",
+    title: "Petersen Automotive Museum",
+    caption: "Batmobile, Fast & Furious, and your smile beside mine. A day to remember.",
+    tag: "Los Angeles",
   },
   {
     src: photo5,
-    label: "Griffith Observatory & Hollywood",
-    caption: "Exploring the universe together — to the moon and back.",
-    rotate: "-1.5deg",
+    title: "Stars & Hollywood",
+    caption: "Griffith Observatory, Hollywood Sign, Space Shuttle — exploring the universe together.",
+    tag: "California",
   },
 ];
 
-function MemoryCard({ memory, index }: { memory: typeof memories[0]; index: number }) {
-  const [hovered, setHovered] = useState(false);
+const PETALS = Array.from({ length: 18 }, (_, i) => ({
+  id: i,
+  left: `${5 + (i * 5.5) % 90}%`,
+  size: 8 + (i % 5) * 4,
+  dur: `${12 + (i % 7) * 2.5}s`,
+  delay: `${(i * 1.3) % 14}s`,
+  drift: `${-40 + (i % 9) * 10}px`,
+  hue: i % 3 === 0 ? "hsl(43 85% 62% / 0.55)" : i % 3 === 1 ? "hsl(340 60% 60% / 0.45)" : "hsl(38 60% 96% / 0.25)",
+}));
 
+function FloatingPetals() {
   return (
-    <motion.div
-      className="relative flex-shrink-0 w-72 md:w-80 cursor-pointer"
-      initial={{ opacity: 0, y: 40, rotate: memory.rotate }}
-      whileInView={{ opacity: 1, y: 0, rotate: memory.rotate }}
-      whileHover={{ scale: 1.04, rotate: "0deg", zIndex: 10 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.7, delay: index * 0.12, ease: "easeOut" }}
-      onHoverStart={() => setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
-      data-testid={`card-memory-${index}`}
-      style={{ rotate: memory.rotate }}
-    >
-      <div className="bg-[#f9f3e8] p-3 pb-10 shadow-2xl rounded-sm border border-[#e8dcc8]/60">
-        <div className="overflow-hidden rounded-sm aspect-[4/3] bg-foreground/5">
-          <motion.img
-            src={memory.src}
-            alt={memory.label}
-            className="w-full h-full object-cover"
-            animate={{ scale: hovered ? 1.06 : 1 }}
-            transition={{ duration: 0.5 }}
-          />
-        </div>
-        <div className="mt-4 px-1">
-          <p className="font-script text-lg text-[#3d2b1a] leading-snug">{memory.label}</p>
-          <p className="font-sans text-xs text-[#7a6250] mt-1 leading-relaxed">{memory.caption}</p>
-        </div>
-      </div>
-    </motion.div>
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+      {PETALS.map((p) => (
+        <div
+          key={p.id}
+          className="petal"
+          style={{
+            left: p.left,
+            width: p.size,
+            height: p.size,
+            backgroundColor: p.hue,
+            ["--dur" as string]: p.dur,
+            ["--delay" as string]: p.delay,
+            ["--drift" as string]: p.drift,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function Divider() {
+  return (
+    <div className="flex items-center justify-center gap-3 my-2">
+      <div className="h-px w-16 bg-gradient-to-r from-transparent to-primary/50" />
+      <span className="text-primary/70 text-lg heartbeat">♡</span>
+      <div className="h-px w-16 bg-gradient-to-l from-transparent to-primary/50" />
+    </div>
   );
 }
 
 export default function Home() {
-  const [activeReasonIndex, setActiveReasonIndex] = useState<number | null>(null);
+  const [activeReason, setActiveReason] = useState<number | null>(null);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
-  const galleryRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: galleryRef, offset: ["start end", "end start"] });
-  const x = useTransform(scrollYProgress, [0, 1], ["5%", "-5%"]);
+
+  useEffect(() => { setMounted(true); }, []);
+
+  const closeLightbox = useCallback(() => setLightboxIdx(null), []);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowRight" && lightboxIdx !== null) setLightboxIdx((i) => (i! + 1) % memories.length);
+      if (e.key === "ArrowLeft" && lightboxIdx !== null) setLightboxIdx((i) => ((i! - 1) + memories.length) % memories.length);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [lightboxIdx, closeLightbox]);
 
   if (!mounted) return null;
 
   return (
-    <div className="min-h-[100dvh] w-full bg-background text-foreground overflow-x-hidden font-sans selection:bg-primary selection:text-background">
+    <div className="min-h-[100dvh] w-full bg-background text-foreground overflow-x-hidden font-sans">
 
-      {/* SECTION 1: Enchanting Hero Reveal */}
-      <section className="relative w-full h-[100dvh] flex flex-col items-center justify-center overflow-hidden">
+      {/* ── HERO ── */}
+      <section className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden px-4 py-20">
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-overlay"
+          className="absolute inset-0 bg-cover bg-center opacity-30"
           style={{ backgroundImage: `url(${velvetBg})` }}
         />
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-background/40 via-background/80 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/60 to-background" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_40%,hsl(340_55%_20%/0.5),transparent)]" />
 
-        <div className="z-10 text-center px-4 flex flex-col items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+        <FloatingPetals />
+
+        <div className="relative z-20 text-center flex flex-col items-center gap-6 max-w-2xl mx-auto">
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
-            className="mb-6"
+            transition={{ duration: 1.6, delay: 0.4, ease: "easeOut" }}
+            className="font-script text-3xl sm:text-4xl md:text-5xl text-primary"
           >
-            <span className="font-script text-3xl md:text-5xl text-primary/80">Happy Birthday, my love</span>
-          </motion.div>
+            Happy Birthday, my love
+          </motion.p>
 
           <motion.h1
-            className="font-serif text-6xl md:text-8xl lg:text-9xl text-primary tracking-tight"
-            initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
+            initial={{ opacity: 0, scale: 0.88, filter: "blur(14px)" }}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-            transition={{ duration: 2, ease: "easeOut", delay: 1 }}
+            transition={{ duration: 2.2, delay: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="font-serif font-light text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-primary tracking-tight glow-name"
           >
             Mohammad
           </motion.h1>
@@ -133,193 +151,324 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 2, delay: 3 }}
-            className="mt-12"
+            transition={{ duration: 1.5, delay: 2.8 }}
+            className="flex flex-col items-center gap-4"
           >
-            <div className="w-[1px] h-24 bg-gradient-to-b from-primary/50 to-transparent mx-auto" />
+            <Divider />
+            <p className="font-serif italic text-foreground/60 text-base sm:text-lg md:text-xl tracking-wide">
+              From Canada to California — and every mile in between
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 2, delay: 4 }}
+            className="mt-6"
+          >
+            <div className="w-px h-20 bg-gradient-to-b from-primary/60 to-transparent mx-auto" />
           </motion.div>
         </div>
       </section>
 
-      {/* SECTION 2: Heartfelt Message */}
-      <section className="relative w-full min-h-[70vh] flex items-center justify-center py-24 px-6 sm:px-12 md:px-24">
+      {/* ── LOVE LETTER ── */}
+      <section className="relative w-full py-20 px-5 sm:px-8 md:px-16 lg:px-24">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,hsl(340_50%_12%/0.8),transparent)]" />
         <motion.div
-          className="max-w-3xl mx-auto text-center"
-          initial={{ opacity: 0, y: 30 }}
+          className="relative z-10 max-w-2xl mx-auto text-center"
+          initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 1.4, ease: "easeOut" }}
         >
-          <h2 className="font-serif text-3xl md:text-5xl text-primary mb-10 italic">To my everything,</h2>
-          <div className="space-y-6 text-lg md:text-xl lg:text-2xl font-light leading-relaxed text-foreground/90 font-serif">
+          <h2 className="font-serif italic text-3xl sm:text-4xl md:text-5xl text-primary mb-3">
+            To my everything,
+          </h2>
+          <Divider />
+          <div className="mt-8 space-y-6 font-serif font-light text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-foreground/85">
             <p>
-              I wanted to give you something that feels like you — something thoughtful, quiet, and deeply beautiful.
-              As your birthday approaches, I find myself thinking about all the moments that have led us here.
+              I have been sitting here, trying to find the right words for you — and I keep
+              realizing that there are none big enough. You are the kind of person who makes
+              the whole world feel quieter and warmer just by existing in it.
             </p>
             <p>
-              You have this incredible way of making the world feel softer, warmer, and endlessly better just by being in it.
-              Across every mile between Toronto and Los Angeles, you have never felt far — because you live in my heart.
+              Across every mile between Toronto and Los Angeles, you have never once felt far.
+              Because the truth is, you live somewhere that distance cannot reach.
+              You live right here.
             </p>
             <p>
-              May this year bring you as much joy, peace, and love as you give to everyone around you.
-              I love you more than words could ever truly capture.
+              On your birthday, I want you to know: being loved by you is the greatest gift
+              of my life. And loving you back — that is my favorite thing I have ever done.
             </p>
-          </div>
-          <div className="mt-12 flex justify-center">
-            <div className="w-16 h-[1px] bg-primary/40" />
+            <p className="font-script text-2xl sm:text-3xl text-primary pt-2">
+              Happy Birthday, Mohammad.
+            </p>
           </div>
         </motion.div>
       </section>
 
-      {/* SECTION 3: Our Story — Photo Gallery */}
-      <section className="relative w-full py-24 overflow-hidden" ref={galleryRef}>
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-card/20 to-background pointer-events-none" />
+      {/* ── OUR STORY — PHOTO GALLERY ── */}
+      <section className="relative w-full py-20 px-4 sm:px-6 md:px-12">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{ backgroundImage: `url(${petalsBg})` }}
+        />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="text-center mb-16 px-6 relative z-10"
+          className="relative z-10 text-center mb-12"
         >
-          <h2 className="font-serif text-4xl md:text-6xl text-primary mb-3">Our Story</h2>
-          <p className="font-script text-2xl md:text-3xl text-foreground/60">Different places. One love.</p>
-          <div className="flex items-center justify-center gap-4 mt-6">
-            <div className="h-[1px] w-20 bg-primary/30" />
-            <span className="font-sans text-xs tracking-widest text-foreground/40 uppercase">Canada &amp; United States</span>
-            <div className="h-[1px] w-20 bg-primary/30" />
-          </div>
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-primary mb-2">Our Story</h2>
+          <p className="font-script text-2xl sm:text-3xl text-foreground/55">the moments I keep closest</p>
+          <Divider />
         </motion.div>
 
-        <motion.div
-          className="flex gap-8 px-12 pb-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide"
-          style={{ x }}
-        >
-          {memories.map((memory, idx) => (
-            <div key={idx} className="snap-center">
-              <MemoryCard memory={memory} index={idx} />
-            </div>
+        {/* Mobile: vertical stack | md+: 2-col then 3-col grid */}
+        <div className="relative z-10 max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          {memories.map((m, idx) => (
+            <motion.button
+              key={idx}
+              onClick={() => setLightboxIdx(idx)}
+              className="group w-full text-left focus:outline-none"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.7, delay: idx * 0.1, ease: "easeOut" }}
+              whileHover={{ y: -4 }}
+              whileTap={{ scale: 0.98 }}
+              data-testid={`btn-memory-${idx}`}
+              aria-label={`View photo: ${m.title}`}
+            >
+              <div className="bg-[#f5ede0] p-2 pb-8 shadow-2xl rounded-sm transition-shadow duration-300 group-hover:shadow-[0_20px_60px_hsl(43_85%_62%/0.25)]">
+                <div className="overflow-hidden rounded-[2px] aspect-[4/3] bg-foreground/10">
+                  <motion.img
+                    src={m.src}
+                    alt={m.title}
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.5 }}
+                    loading="lazy"
+                  />
+                </div>
+                <div className="px-2 pt-3">
+                  <p className="font-script text-xl text-[#3a2010] leading-tight">{m.title}</p>
+                  <p className="font-sans text-[11px] text-[#7a6045] mt-1 leading-snug">{m.caption}</p>
+                  <p className="font-sans text-[10px] text-[#a08060] mt-2 tracking-widest uppercase">{m.tag}</p>
+                </div>
+              </div>
+            </motion.button>
           ))}
-        </motion.div>
+        </div>
 
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="text-center font-script text-xl text-foreground/40 mt-10 px-6"
+          transition={{ duration: 1, delay: 0.4 }}
+          className="relative z-10 text-center font-script text-xl sm:text-2xl text-foreground/40 mt-12"
         >
           Every mile between us was worth every single moment together.
         </motion.p>
       </section>
 
-      {/* SECTION 4: Reasons I Love You */}
-      <section className="relative w-full py-32 px-6 sm:px-12 md:px-24 bg-card/30">
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20 mix-blend-overlay"
-          style={{ backgroundImage: `url(${petalsBg})` }}
-        />
+      {/* ── REASONS I LOVE YOU ── */}
+      <section className="relative w-full py-20 px-4 sm:px-6 md:px-12 bg-card/20">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_50%,hsl(340_50%_14%/0.7),transparent)]" />
+
         <div className="relative z-10 max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <h2 className="font-serif text-4xl md:text-6xl text-primary mb-4">Eight reasons</h2>
-            <p className="font-script text-2xl md:text-3xl text-foreground/70">why I love you</p>
+            <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-primary mb-2">
+              Eight reasons
+            </h2>
+            <p className="font-script text-2xl sm:text-3xl text-foreground/55">
+              why I love you
+            </p>
+            <Divider />
+            <p className="font-sans text-xs text-foreground/35 tracking-widest uppercase mt-4">
+              Tap each one to reveal
+            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {reasons.map((reason, idx) => (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {reasons.map((r, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: idx * 0.1 }}
-                onHoverStart={() => setActiveReasonIndex(idx)}
-                onHoverEnd={() => setActiveReasonIndex(null)}
-                className="group relative h-48 rounded-xl border border-primary/20 bg-background/50 backdrop-blur-sm p-6 flex items-center justify-center text-center cursor-pointer overflow-hidden transition-all duration-500 hover:border-primary/60 hover:bg-card/80 shadow-lg"
-                data-testid={`card-reason-${idx}`}
+                transition={{ duration: 0.6, delay: idx * 0.08 }}
+                className="relative"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                <AnimatePresence mode="wait">
-                  {activeReasonIndex === idx ? (
-                    <motion.div
-                      key="content"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.3 }}
-                      className="relative z-10"
-                    >
-                      <p className="font-sans text-sm md:text-base text-foreground/90 font-light leading-relaxed">
-                        {reason}
-                      </p>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="number"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.3 }}
-                      className="relative z-10"
-                    >
-                      <span className="font-serif text-4xl text-primary/30 group-hover:text-primary transition-colors duration-500 italic">
-                        {idx + 1}
-                      </span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <button
+                  onClick={() => setActiveReason(activeReason === idx ? null : idx)}
+                  className="w-full h-40 sm:h-48 rounded-xl border border-primary/20 bg-background/40 backdrop-blur-sm flex items-center justify-center text-center cursor-pointer overflow-hidden transition-colors duration-300 hover:border-primary/50 active:border-primary/70 focus:outline-none group"
+                  data-testid={`btn-reason-${idx}`}
+                  aria-pressed={activeReason === idx}
+                  aria-label={`Reason ${r.num}`}
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br from-primary/8 to-primary/3 transition-opacity duration-400 ${activeReason === idx ? "opacity-100" : "opacity-0 group-hover:opacity-60"}`} />
+                  <AnimatePresence mode="wait">
+                    {activeReason === idx ? (
+                      <motion.p
+                        key="text"
+                        initial={{ opacity: 0, scale: 0.88 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.88 }}
+                        transition={{ duration: 0.28 }}
+                        className="relative z-10 px-3 font-serif text-sm sm:text-base text-foreground/90 font-light leading-snug"
+                      >
+                        {r.text}
+                      </motion.p>
+                    ) : (
+                      <motion.span
+                        key="num"
+                        initial={{ opacity: 0, scale: 0.88 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.88 }}
+                        transition={{ duration: 0.28 }}
+                        className="relative z-10 font-serif text-4xl sm:text-5xl italic text-primary/40 group-hover:text-primary/70 transition-colors duration-300"
+                      >
+                        {r.num}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </button>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* SECTION 5: Countdown/Wish Moment */}
-      <section className="relative w-full min-h-[60vh] flex items-center justify-center py-24 px-6 text-center">
+      {/* ── BIRTHDAY WISH ── */}
+      <section className="relative w-full py-20 px-4 sm:px-6">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_50%,hsl(43_85%_62%/0.06),transparent)]" />
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1.2 }}
-          className="max-w-2xl mx-auto p-12 border border-primary/20 rounded-2xl bg-card/20 backdrop-blur-md relative overflow-hidden"
+          className="relative z-10 max-w-xl mx-auto text-center border border-primary/20 rounded-2xl p-8 sm:p-12 bg-card/25 backdrop-blur-md"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5" />
-          <div className="relative z-10">
-            <span className="font-script text-3xl text-primary mb-4 block">A beautiful year ahead</span>
-            <h3 className="font-serif text-3xl md:text-5xl text-foreground mb-8">
-              Counting the days until we celebrate you.
-            </h3>
-            <p className="font-light text-foreground/80 font-sans tracking-wide uppercase text-sm">
-              Next week is your birthday
-            </p>
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
+          <p className="font-script text-3xl sm:text-4xl text-primary mb-5 block relative z-10">
+            A beautiful year ahead
+          </p>
+          <h3 className="font-serif font-light text-2xl sm:text-3xl md:text-4xl text-foreground relative z-10 leading-snug mb-6">
+            Counting down the days until I get to hold you again and celebrate you properly.
+          </h3>
+          <div className="relative z-10 inline-block px-5 py-2 border border-primary/30 rounded-full">
+            <span className="font-sans text-xs tracking-widest text-primary/70 uppercase">
+              Your birthday is next week
+            </span>
           </div>
         </motion.div>
       </section>
 
-      {/* SECTION 6: Closing */}
-      <section className="relative w-full h-[50vh] flex items-center justify-center overflow-hidden bg-background">
-        <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
-          <div className="w-[800px] h-[800px] bg-primary rounded-full blur-[120px]" />
-        </div>
+      {/* ── CLOSING ── */}
+      <section className="relative w-full min-h-[55vh] flex flex-col items-center justify-center overflow-hidden px-4 py-20">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,hsl(340_50%_15%/0.6),transparent)]" />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background to-transparent" />
+
+        <FloatingPetals />
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 1.5 }}
-          className="z-10 text-center"
+          transition={{ duration: 1.8 }}
+          className="relative z-20 text-center"
         >
-          <h2 className="font-serif text-5xl md:text-7xl text-primary mb-6">Happy Birthday</h2>
-          <p className="font-script text-3xl text-foreground/80">Forever yours</p>
+          <h2 className="font-serif font-light text-5xl sm:text-6xl md:text-7xl text-primary mb-5 glow-name">
+            Happy Birthday
+          </h2>
+          <p className="font-script text-3xl sm:text-4xl text-foreground/70 mb-8">
+            Forever yours
+          </p>
+          <span className="text-4xl heartbeat inline-block text-primary/80 select-none">♡</span>
         </motion.div>
       </section>
+
+      {/* ── LIGHTBOX ── */}
+      <AnimatePresence>
+        {lightboxIdx !== null && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md flex flex-col items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeLightbox}
+            data-testid="lightbox-overlay"
+          >
+            <motion.div
+              className="relative w-full max-w-3xl mx-auto"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.35 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={memories[lightboxIdx].src}
+                alt={memories[lightboxIdx].title}
+                className="w-full rounded-lg shadow-2xl object-contain max-h-[75vh]"
+              />
+              <div className="mt-4 text-center">
+                <p className="font-script text-2xl text-primary">{memories[lightboxIdx].title}</p>
+                <p className="font-serif text-sm text-foreground/60 mt-1">{memories[lightboxIdx].caption}</p>
+              </div>
+
+              {/* Prev / Next */}
+              <button
+                onClick={() => setLightboxIdx(((lightboxIdx - 1) + memories.length) % memories.length)}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-10 sm:-translate-x-14 text-primary/60 hover:text-primary text-3xl transition-colors focus:outline-none"
+                data-testid="lightbox-prev"
+                aria-label="Previous photo"
+              >
+                ‹
+              </button>
+              <button
+                onClick={() => setLightboxIdx((lightboxIdx + 1) % memories.length)}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-10 sm:translate-x-14 text-primary/60 hover:text-primary text-3xl transition-colors focus:outline-none"
+                data-testid="lightbox-next"
+                aria-label="Next photo"
+              >
+                ›
+              </button>
+            </motion.div>
+
+            {/* Dot indicators */}
+            <div className="flex gap-2 mt-6">
+              {memories.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); setLightboxIdx(i); }}
+                  className={`w-2 h-2 rounded-full transition-colors focus:outline-none ${i === lightboxIdx ? "bg-primary" : "bg-primary/25"}`}
+                  data-testid={`lightbox-dot-${i}`}
+                  aria-label={`Go to photo ${i + 1}`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={closeLightbox}
+              className="absolute top-4 right-4 text-foreground/50 hover:text-foreground text-2xl focus:outline-none"
+              data-testid="lightbox-close"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

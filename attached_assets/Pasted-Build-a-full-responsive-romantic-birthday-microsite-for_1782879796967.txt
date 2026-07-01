@@ -1,0 +1,261 @@
+Build a full responsive romantic birthday microsite for my partner Mohammad.
+
+Project concept:
+This is not a generic birthday landing page. It should feel like a private digital love letter that unfolds like a cinematic story. The emotional direction is: elegant, intimate, warm, deep burgundy, gold, soft light, quiet luxury, personal, not cheesy, not childish.
+
+Use React + Vite. Use Framer Motion for animations if possible. Use clean component structure. The site must be mobile-first and also look beautiful on desktop.
+
+Visual style:
+- Deep burgundy / wine background: #2b0310, #3a0715, #4a0d1c
+- Gold accents: #c9a227, #d8b94c
+- Ivory text: #fff7ec
+- Soft blush shadows: rgba(255, 190, 190, 0.08)
+- Elegant serif typography for headings, readable serif/sans for body.
+- Use Google Fonts:
+  - Playfair Display for main headings
+  - Cormorant Garamond or Libre Baskerville for body
+  - Great Vibes or Parisienne only for small accent phrases, not body text
+- Add subtle grain/noise overlay.
+- Add very subtle floating gold dust particles or soft glowing orbs in the background.
+- Do not use bright red hearts, childish icons, glitter overload, or cheap Valentine style.
+- The page should feel like velvet, candlelight, a sealed letter, and a private night.
+
+Important UX:
+- Mobile-first.
+- Smooth scrolling.
+- Every section should have breathing space.
+- No huge walls of text.
+- Use scroll reveal animations.
+- Respect prefers-reduced-motion.
+- Do not autoplay audio with sound. Add a music toggle button.
+- Add placeholders for videos, images, voice notes, and background music.
+- All video placeholders should be easy to replace from /public/assets/videos.
+- All image placeholders should be easy to replace from /public/assets/images.
+- Add comments in code showing where I should replace video/image/audio files.
+
+Site title:
+“For Mohammad”
+
+Main sections:
+
+1. Opening / Locked Letter
+Create a full-screen intro section.
+Dark burgundy background, soft gold glow.
+Text:
+“Open when you’re alone.”
+Small subtitle:
+“I made you a place, not just a birthday message.”
+Button:
+“Open the letter”
+When clicked, smoothly reveal the main page content. Add a gold seal / thin line animation opening like a letter.
+
+2. Hero Section
+Full-screen cinematic hero.
+Text:
+“Happy Birthday, my love”
+Large heading:
+“Mohammad”
+Small line:
+“Before the candles, before the noise, this is for you.”
+Add animated gold vertical line under the name.
+Background should have slow moving gradient and soft vignette.
+Add optional muted background video placeholder:
+public/assets/videos/hero-bg.mp4
+If no video exists, use gradient background.
+
+3. First Video Message Section
+This is the emotional hook.
+Title:
+“A little piece of my heart”
+Text:
+“I tried to write this like a normal message, but it kept becoming too small for what I feel.”
+Add a beautiful video card placeholder for my first short video message.
+Video file path placeholder:
+public/assets/videos/message-1.mp4
+Design the video card like a framed memory with gold border, rounded corners, soft shadow.
+Add a poster image placeholder:
+public/assets/images/video-poster-1.jpg
+
+4. Love Letter Section
+Elegant centered but readable letter section.
+Title:
+“To my everything,”
+Body text:
+“I wanted to give you something that feels like you — something thoughtful, quiet, and deeply beautiful.
+
+Your birthday made me stop and think about all the little moments that brought us here.
+
+You have this way of making the world feel softer, warmer, and safer just by being in it.
+
+I hope this year gives back to you all the light, patience, and love you give to the people around you.”
+
+Add a small gold divider at the bottom.
+Make the line width readable, not too wide.
+
+5. Story Timeline Section
+Title:
+“How you became my favorite place”
+Create 4 scroll-reveal timeline cards:
+- “The first spark”
+  Text: “Some people arrive loudly. You arrived quietly — and somehow stayed.”
+- “The way you changed my days”
+  Text: “You made ordinary moments feel warmer.”
+- “The things I notice”
+  Text: “The calm in your voice, the way you listen, the way your presence softens everything.”
+- “The wish I carry”
+  Text: “I hope this year is gentle with you. I hope it gives you peace, joy, and the kind of love you never have to question.”
+
+Each timeline card should support an optional image placeholder:
+public/assets/images/memory-1.jpg, memory-2.jpg, memory-3.jpg, memory-4.jpg
+
+6. Eight Reasons Section
+This section should replace boring empty cards.
+Title:
+“Eight reasons”
+Subtitle:
+“why I love you”
+
+Create 8 interactive cards in a responsive grid.
+Each card initially shows only a number and a short title.
+On click, the card expands or opens a modal with a longer message.
+Cards:
+
+1. Title: “Your calm”
+Message:
+“You make calm feel possible, even when my mind is loud.”
+
+2. Title: “Your heart”
+Message:
+“You carry a softness that you probably don’t even notice, but I do.”
+
+3. Title: “Your presence”
+Message:
+“Some people need to do a lot to be felt. You just have to be there.”
+
+4. Title: “Your patience”
+Message:
+“You have a way of making me feel like I don’t have to rush my feelings.”
+
+5. Title: “Your smile”
+Message:
+“There are small things about you that stay with me longer than you know.”
+
+6. Title: “Your mind”
+Message:
+“I love the way you think, the way you notice, the way you understand things quietly.”
+
+7. Title: “Your warmth”
+Message:
+“You make the world feel less sharp.”
+
+8. Title: “The future”
+Message:
+“I don’t know every detail of what comes next, but I know I want more days with you in them.”
+
+Card design:
+- Thin gold border
+- Soft hover glow
+- Smooth flip/reveal animation
+- No aggressive effects
+- On mobile, cards should stack beautifully
+
+7. Voice Notes Section
+Title:
+“If you miss me, press play”
+Create a section that looks like a small private audio archive.
+Add 4 audio players with custom styled cards:
+- “When you need a smile”
+- “When you miss my voice”
+- “When your day feels heavy”
+- “For your birthday night”
+
+Audio placeholders:
+public/assets/audio/voice-1.mp3
+public/assets/audio/voice-2.mp3
+public/assets/audio/voice-3.mp3
+public/assets/audio/voice-4.mp3
+
+If files do not exist, show beautiful placeholder cards with disabled play buttons and text: “Voice note coming soon.”
+
+8. Countdown Section
+Create an elegant countdown to Mohammad’s birthday.
+Use a constant variable at the top of the file:
+const BIRTHDAY_DATE = "2026-07-XXT00:00:00";
+Make it easy for me to replace the date.
+Show days, hours, minutes, seconds.
+Text:
+“Counting the days until we celebrate you.”
+Small text:
+“Every day brings me closer to loving you out loud.”
+
+If the birthday has passed, show:
+“Today is yours.”
+
+9. Secret Section
+Create a hidden surprise section.
+Before it opens, show a small subtle button:
+“One more thing…”
+When clicked, reveal a secret section with a soft animation.
+Title:
+“The part I almost kept to myself”
+Text:
+“There are things I say badly in real time, so I built them here — slowly, carefully, for you.”
+Add a second video placeholder:
+public/assets/videos/secret-message.mp4
+Add a button:
+“Play my secret message”
+
+10. Final Section
+Full-screen ending.
+Large text:
+“You are loved.”
+Second line:
+“Deeply. Truly. Softly.”
+Then:
+“Happy Birthday, Mohammad”
+Small signature:
+“Forever yours,”
+Then a handwritten-style line:
+“Melody”
+
+Add a final button:
+“Replay from the beginning”
+This should scroll back to top.
+
+Extra features:
+- Add a floating music control button fixed bottom-right.
+- Music file placeholder:
+public/assets/audio/background-music.mp3
+- Music should only play after user clicks the button.
+- Add a progress bar at the top showing scroll progress.
+- Add soft page transitions.
+- Add tiny hidden gold stars/particles that glow on hover.
+- Make all content easy to edit from a single data file if possible, like src/data/loveContent.js.
+- Use reusable components:
+  - Section
+  - VideoCard
+  - ReasonCard
+  - AudioNote
+  - TimelineCard
+  - Countdown
+  - SecretReveal
+  - MusicToggle
+
+Technical requirements:
+- Clean, modern React code.
+- No backend required.
+- All assets should be stored in public/assets.
+- If assets are missing, show placeholders instead of crashing.
+- Fully responsive.
+- Beautiful on iPhone screen sizes.
+- Avoid horizontal overflow.
+- Use CSS variables for colors.
+- Add accessibility labels for buttons and media.
+- Provide final instructions in README explaining how to replace:
+  - birthday date
+  - videos
+  - audio files
+  - images
+  - text content
+
+The final result should feel cinematic, emotional, intimate, and custom-made for Mohammad — like walking through a private love letter.
