@@ -1,0 +1,373 @@
+Build a cinematic romantic birthday website called “A Film Made For Mohammad”.
+
+This is not a normal birthday landing page. It should feel like a private short film website made by Melody for Mohammad. The user has real videos of themselves and Mohammad, including videos from before they met in person, so the whole website should feel like an emotional movie timeline: before meeting, first connection, memories, voiceover, birthday ending.
+
+Use React + Vite.
+Use Framer Motion for animations.
+Use a clean component structure.
+Make it mobile-first and beautiful on desktop.
+
+Overall concept:
+The website should behave like a romantic film that unfolds while scrolling.
+
+Structure:
+- Opening title
+- Prologue: before we met
+- Scene 1
+- Scene 2
+- Voiceover interlude
+- Memory montage
+- Eight frames / reasons
+- Secret scene
+- Final scene / birthday ending
+- End credits
+
+Visual style:
+- Deep burgundy, black cherry, warm gold, ivory text.
+- Cinematic film grain.
+- Soft vignette.
+- Subtle gold light leaks.
+- Elegant typography.
+- No childish hearts, no cheesy glitter, no generic Valentine design.
+- It should feel like an intimate film, candlelight, old cinema, velvet, handwritten love, and archived memories.
+
+Colors:
+--bg: #170006
+--bg2: #2b0310
+--wine: #3a0715
+--gold: #d4af37
+--softGold: #f0d77b
+--ivory: #fff7ec
+--mutedText: #d8cfc7
+
+Fonts:
+Use Google Fonts:
+- Playfair Display for big film titles
+- Cormorant Garamond or Libre Baskerville for body text
+- Great Vibes or Parisienne only for small accent phrases
+
+Important UX:
+- The site should feel like watching a film through scrolling.
+- Each section is a “scene”.
+- Add a fixed top scroll progress bar styled like a film timeline.
+- Add a small fixed “sound on / sound off” button.
+- Background music should NOT autoplay with sound. It should only play after user clicks.
+- Use smooth scene transitions: fade to black, film burn, soft light leak, slow zoom.
+- Add subtitles/captions under video placeholders.
+- Video should be lazy-loaded and never break if missing.
+- If an asset is missing, show a beautiful cinematic placeholder frame instead.
+- Respect prefers-reduced-motion.
+- Avoid horizontal overflow.
+- Mobile experience must be excellent.
+
+Assets folder:
+Create these folders:
+public/assets/videos
+public/assets/images
+public/assets/audio
+
+Video placeholders:
+public/assets/videos/opening.mp4
+public/assets/videos/before-we-met-1.mp4
+public/assets/videos/before-we-met-2.mp4
+public/assets/videos/scene-1.mp4
+public/assets/videos/scene-2.mp4
+public/assets/videos/montage-1.mp4
+public/assets/videos/montage-2.mp4
+public/assets/videos/voiceover-video.mp4
+public/assets/videos/secret-scene.mp4
+public/assets/videos/final-message.mp4
+
+Image placeholders:
+public/assets/images/poster-opening.jpg
+public/assets/images/poster-before.jpg
+public/assets/images/poster-scene-1.jpg
+public/assets/images/poster-scene-2.jpg
+public/assets/images/poster-final.jpg
+
+Audio placeholders:
+public/assets/audio/background-music.mp3
+public/assets/audio/voiceover-1.mp3
+public/assets/audio/voiceover-2.mp3
+public/assets/audio/voiceover-3.mp3
+
+Main sections in detail:
+
+1. Opening Title Screen
+Full-screen black/burgundy cinematic intro.
+Show small text:
+“A private film by Melody”
+Then big title:
+“A Film Made For Mohammad”
+Subtitle:
+“for your birthday, and for all the moments that brought us here”
+Button:
+“Start the film”
+
+When clicked, the page begins and background music can optionally be enabled.
+
+Animation:
+- Fade in like movie titles.
+- Film grain.
+- Soft gold line appears under the title.
+- Slow zoom background.
+
+2. Prologue — Before We Met
+This section is very important.
+Title:
+“Prologue”
+Subtitle:
+“Before we were standing in the same place”
+Text:
+“Before we had real memories in the same city, there were voices, little videos, late thoughts, and the strange feeling that someone far away was becoming close.”
+
+Add a horizontal or vertical cinematic reel with two video cards:
+- before-we-met-1.mp4
+- before-we-met-2.mp4
+
+Each video card should look like an old film frame.
+Add caption placeholders:
+“Before we met, but somehow already close.”
+“Distance had its own kind of magic.”
+
+3. Scene 1 — The First Real Feeling
+Title:
+“Scene 1”
+Large heading:
+“The moment you became real to me”
+Text:
+“Some people arrive all at once. You arrived slowly — through words, through small moments, through the kind of presence that stays.”
+
+Add video placeholder:
+scene-1.mp4
+
+Add optional note below:
+“Replace this with the first video or memory that feels like the beginning.”
+
+4. Scene 2 — Us, In Motion
+Title:
+“Scene 2”
+Large heading:
+“When the memories started moving”
+Text:
+“Then there were days, places, small laughs, quiet looks, and moments that did not need to be perfect to become unforgettable.”
+
+Add two video cards or one large video:
+scene-2.mp4
+montage-1.mp4
+
+Create a cinematic split layout on desktop, stacked on mobile.
+
+5. Voiceover Interlude
+Title:
+“Voiceover”
+Heading:
+“The things I say better when the world is quiet”
+Text:
+“I wanted this part to feel like my voice sitting beside you.”
+
+Add an audio player card for:
+voiceover-1.mp3
+
+Also add optional background video placeholder:
+voiceover-video.mp4
+
+Design:
+- Dark section.
+- Big quote text.
+- Audio waveform-style fake visual.
+- Gold play button.
+- If audio missing, show “Voiceover coming soon.”
+
+6. Memory Montage
+Title:
+“Montage”
+Heading:
+“Little pieces of us”
+Create a filmstrip grid of 6 memory cards.
+Each card can hold either an image or video.
+Use placeholders:
+memory-1, memory-2, memory-3, etc.
+
+Each card has:
+- scene number
+- title
+- short caption
+
+Example captions:
+- “The laugh I still remember”
+- “A moment that felt soft”
+- “The kind of ordinary day I want more of”
+- “A tiny second that became mine”
+- “The way you looked at me”
+- “Proof that time was kind to us”
+
+On click, open a modal/lightbox with the video/image and caption.
+
+7. Eight Frames, Not Eight Reasons
+Instead of generic “Eight reasons why I love you”, make it cinematic:
+Title:
+“Eight Frames”
+Subtitle:
+“eight reasons I keep choosing you”
+
+Create 8 interactive film-frame cards.
+Each card starts as a numbered film frame.
+On hover/click, it reveals a message.
+
+Cards:
+
+Frame 01 — Your calm
+Message:
+“You make calm feel possible, even when my heart is loud.”
+
+Frame 02 — Your presence
+Message:
+“You do not have to do much to be felt. You just have to be there.”
+
+Frame 03 — Your softness
+Message:
+“There is a gentleness in you that I notice, even when you do not.”
+
+Frame 04 — Your mind
+Message:
+“I love the way you think, the way you notice, the way you understand things quietly.”
+
+Frame 05 — Your smile
+Message:
+“Some small things about you stay with me longer than you know.”
+
+Frame 06 — Your patience
+Message:
+“You make me feel like my feelings do not have to run to be accepted.”
+
+Frame 07 — Your warmth
+Message:
+“You make the world feel less sharp.”
+
+Frame 08 — The future
+Message:
+“I do not know every scene ahead, but I know I want more of you in the story.”
+
+Animation:
+- Film frame border.
+- Soft gold glow.
+- Flip or reveal effect.
+- On mobile, tap to expand.
+
+8. Secret Scene
+Add a hidden section.
+Before opening, show a subtle button:
+“Unlock the scene I almost kept to myself”
+
+When clicked, reveal:
+Title:
+“Secret Scene”
+Heading:
+“The part I almost whispered”
+Text:
+“There are things I say badly in real time, so I built them here slowly, carefully, for you.”
+
+Add video placeholder:
+secret-scene.mp4
+
+Add a button:
+“Play secret message”
+
+9. Countdown / Premiere Date
+Create a countdown styled like a movie premiere countdown.
+Title:
+“Premiere Night”
+Heading:
+“Counting down to your birthday”
+Use editable variable:
+const BIRTHDAY_DATE = "2026-07-XXT00:00:00";
+
+Show:
+days / hours / minutes / seconds
+
+Text:
+“Every second brings me closer to celebrating you.”
+
+If date has passed:
+“Today is yours.”
+
+10. Final Scene
+Full-screen emotional ending.
+Title:
+“Final Scene”
+Big text:
+“Happy Birthday, Mohammad”
+Then:
+“You are loved.”
+“Deeply. Truly. Softly.”
+
+Add final video placeholder:
+final-message.mp4
+
+Signature:
+“Forever yours,”
+“Melody”
+
+Add button:
+“Replay the film”
+This scrolls back to the top.
+
+11. End Credits
+Create a cinematic credits section:
+A Film Made For Mohammad
+Written by Melody
+Directed by love
+Starring: us
+Special appearance: every little memory before and after we met
+Soundtrack: my heart being dramatic again
+
+Make credits slowly scroll upward like movie credits, but subtle and elegant.
+
+Components to create:
+- App
+- SceneSection
+- OpeningTitle
+- VideoFrame
+- FilmStrip
+- MemoryCard
+- VoiceoverPlayer
+- EightFrames
+- SecretScene
+- Countdown
+- FinalScene
+- EndCredits
+- MusicToggle
+- ScrollProgress
+
+Data:
+Put editable content in:
+src/data/filmContent.js
+
+I want to easily replace:
+- scene titles
+- text
+- video file names
+- captions
+- birthday date
+- music file
+- voiceover files
+
+Technical requirements:
+- Clean React code.
+- Responsive CSS.
+- Use CSS variables.
+- Use Framer Motion.
+- Videos should use poster images.
+- Videos should include controls.
+- Background videos should be muted, looped, playsInline.
+- Do not autoplay sound.
+- Add alt text for images.
+- Add aria labels for buttons.
+- If video/audio/image files are missing, show a styled placeholder instead of crashing.
+- Add README with instructions for replacing all assets.
+
+Emotional direction:
+The final website should feel like Mohammad is watching the story of us unfold as a private film.
+It should not feel like a template.
+It should feel personal, cinematic, intimate, warm, and unforgettable.
