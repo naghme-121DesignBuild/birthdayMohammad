@@ -57,6 +57,7 @@ export default function Home() {
   const [secretOpen, setSecretOpen] = useState(false);
   const [introVideoError, setIntroVideoError] = useState(false);
   const [videoMuted, setVideoMuted] = useState(true);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const introVideoRef = useRef<HTMLVideoElement>(null);
 
   const handleOpen = () => {
@@ -70,8 +71,18 @@ export default function Home() {
     if (!showVideo || !introVideoRef.current) return;
     const vid = introVideoRef.current;
     vid.muted = true;
-    vid.play().catch(() => {});
+    vid.play().then(() => setVideoPlaying(true)).catch(() => {
+      // autoplay blocked — show play button overlay, user will tap
+    });
   }, [showVideo]);
+
+  const handlePlayVideo = () => {
+    if (!introVideoRef.current) return;
+    const vid = introVideoRef.current;
+    vid.muted = false;
+    setVideoMuted(false);
+    vid.play().then(() => setVideoPlaying(true)).catch(() => {});
+  };
 
   const handleUnmute = () => {
     if (!introVideoRef.current) return;
@@ -240,22 +251,49 @@ export default function Home() {
                   muted
                   playsInline
                   className="w-full h-full object-cover"
+                  onPlay={() => setVideoPlaying(true)}
                   onEnded={triggerTransition}
                   onError={() => setIntroVideoError(true)}
                   data-testid="video-intro"
                 />
                 {/* Vignette overlay */}
                 <div className="absolute inset-0 pointer-events-none film-vignette" />
-                {/* Unmute button — appears while muted */}
+
+                {/* PLAY BUTTON OVERLAY — shown if autoplay was blocked */}
                 <AnimatePresence>
-                  {videoMuted && (
+                  {!videoPlaying && (
+                    <motion.div
+                      className="absolute inset-0 flex flex-col items-center justify-center bg-filmBlack/70 backdrop-blur-sm cursor-pointer"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.4, delay: 0.5 }}
+                      onClick={handlePlayVideo}
+                    >
+                      <motion.div
+                        className="w-24 h-24 rounded-full border-2 border-filmGold flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(212,175,55,0.3)]"
+                        animate={{ scale: [1, 1.05, 1] }}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                      >
+                        <span className="text-filmGold text-4xl ml-1">▶</span>
+                      </motion.div>
+                      <p className="font-ui text-xs tracking-[0.3em] text-filmGold/70 uppercase">
+                        Tap to play
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Unmute button — appears while playing but muted */}
+                <AnimatePresence>
+                  {videoPlaying && videoMuted && (
                     <motion.button
                       onClick={handleUnmute}
                       className="absolute bottom-6 left-6 flex items-center gap-2 px-4 py-2 border border-filmGold/50 text-filmGold/80 hover:text-filmGold hover:border-filmGold bg-filmBlack/60 backdrop-blur-sm font-ui text-xs tracking-widest uppercase transition-all duration-300 rounded-sm focus:outline-none"
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 8 }}
-                      transition={{ delay: 0.8, duration: 0.5 }}
+                      transition={{ delay: 0.5, duration: 0.4 }}
                       aria-label="Enable sound"
                       data-testid="btn-unmute"
                     >
@@ -264,7 +302,8 @@ export default function Home() {
                     </motion.button>
                   )}
                 </AnimatePresence>
-                {/* Skip button — unobtrusive, bottom right */}
+
+                {/* Skip button — bottom right */}
                 <button
                   onClick={triggerTransition}
                   className="absolute bottom-6 right-6 px-4 py-2 border border-filmIvory/20 text-filmIvory/40 hover:text-filmIvory hover:border-filmIvory/60 font-ui text-xs tracking-widest uppercase transition-all duration-300 rounded-sm focus:outline-none"
