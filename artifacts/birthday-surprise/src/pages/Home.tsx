@@ -839,32 +839,6 @@ export default function Home() {
             <Countdown targetDate={BIRTHDAY_DATE} />
           </SceneSection>
 
-          {/* SECTION 10: Final Scene */}
-          <section className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center bg-filmBlack px-4 py-32 overflow-hidden text-center film-vignette">
-            <div className="absolute inset-0 opacity-20 pointer-events-none">
-              <VideoFrame src="/assets/videos/final-message.mp4" title="" />
-            </div>
-            
-            <div className="relative z-10 flex flex-col items-center max-w-3xl">
-              <SceneLabel>Final Scene</SceneLabel>
-              
-              <p className="font-display italic text-3xl sm:text-4xl text-filmIvory mb-6">
-                You are loved.
-              </p>
-              
-              <p className="font-body italic text-2xl sm:text-3xl text-filmMuted mb-20">
-                Deeply. Truly. Softly.
-              </p>
-              
-
-              <button 
-                onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
-                className="mt-32 px-8 py-3 border border-filmGold/40 text-filmGold/60 hover:text-filmGold hover:border-filmGold hover:shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-500 font-ui tracking-widest text-sm uppercase rounded-sm"
-              >
-                Replay the film
-              </button>
-            </div>
-          </section>
 
           {/* SECTION 11: End Credits */}
           <EndCredits credits={endCredits} />
