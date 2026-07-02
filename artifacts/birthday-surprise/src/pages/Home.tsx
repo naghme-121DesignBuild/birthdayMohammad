@@ -50,35 +50,80 @@ function SceneLabel({ children }: { children: React.ReactNode }) {
 
 function RobotMascot() {
   const vidRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rafRef = useRef<number>(0);
   const [missing, setMissing] = useState(false);
 
   useEffect(() => {
     const vid = vidRef.current;
-    if (!vid) return;
+    const canvas = canvasRef.current;
+    if (!vid || !canvas) return;
+
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return;
+
+    function drawFrame() {
+      if (!vid || !canvas || !ctx || vid.paused || vid.ended) {
+        rafRef.current = requestAnimationFrame(drawFrame);
+        return;
+      }
+      const w = vid.videoWidth || 300;
+      const h = vid.videoHeight || 300;
+      if (canvas.width !== w) canvas.width = w;
+      if (canvas.height !== h) canvas.height = h;
+
+      ctx.drawImage(vid, 0, 0, w, h);
+      const frame = ctx.getImageData(0, 0, w, h);
+      const d = frame.data;
+      for (let i = 0; i < d.length; i += 4) {
+        const r = d[i], g = d[i + 1], b = d[i + 2];
+        // Chroma key: remove green screen pixels
+        if (g > 100 && g > r * 1.4 && g > b * 1.4) {
+          d[i + 3] = 0;
+        }
+      }
+      ctx.putImageData(frame, 0, 0);
+      rafRef.current = requestAnimationFrame(drawFrame);
+    }
 
     const ensurePlay = () => {
+      if (!vid) return;
       vid.currentTime = 0;
       vid.play().catch(() => {});
     };
 
     vid.addEventListener("ended", ensurePlay);
+    vid.addEventListener("canplay", () => {
+      vid.play().catch(() => {
+        vid.muted = true;
+        vid.play().catch(() => {});
+      });
+      rafRef.current = requestAnimationFrame(drawFrame);
+    }, { once: true });
 
-    // Attempt autoplay (muted always allows it)
-    vid.play().catch(() => {
-      vid.muted = true;
-      vid.play().catch(() => {});
-    });
+    vid.muted = true;
+    vid.play().catch(() => {});
+    rafRef.current = requestAnimationFrame(drawFrame);
 
-    return () => vid.removeEventListener("ended", ensurePlay);
+    return () => {
+      vid.removeEventListener("ended", ensurePlay);
+      cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   if (missing) return null;
 
   return (
-    <div
-      className="flex justify-center"
-      style={{ marginBottom: "-24px", position: "relative", zIndex: 10 }}
-    >
+    <div style={{
+      position: "absolute",
+      top: "-64px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      zIndex: 20,
+      pointerEvents: "none",
+      width: "clamp(60px, 8vw, 110px)",
+    }}>
+      {/* Hidden video source */}
       <video
         ref={vidRef}
         src="/assets/videos/wooden-robot-loop.mp4"
@@ -88,16 +133,18 @@ function RobotMascot() {
         playsInline
         preload="auto"
         onError={() => setMissing(true)}
+        style={{ display: "none" }}
+      />
+      {/* Canvas renders chroma-keyed frames */}
+      <canvas
+        ref={canvasRef}
         style={{
-          width: "clamp(60px, 8vw, 110px)",
-          objectFit: "contain",
-          background: "transparent",
-          border: "none",
-          outline: "none",
+          width: "100%",
+          height: "auto",
           display: "block",
           filter: [
-            "drop-shadow(0 4px 14px rgba(212,175,55,0.35))",
-            "drop-shadow(0 2px 8px rgba(100,10,35,0.5))",
+            "drop-shadow(0 6px 16px rgba(212,175,55,0.3))",
+            "drop-shadow(0 2px 8px rgba(80,0,25,0.45))",
           ].join(" "),
         }}
       />
@@ -606,9 +653,6 @@ export default function Home() {
                     borderRadius: "50%",
                   }} />
 
-                  {/* Robot mascot — sits on top of the frame */}
-                  <RobotMascot />
-
                   {/* The cinematic frame */}
                   <div className="relative rounded-2xl overflow-hidden" style={{
                     aspectRatio: "9/16",
@@ -769,6 +813,9 @@ export default function Home() {
 
                 {/* Frame container — flexible for any aspect ratio */}
                 <div className="relative w-full max-w-2xl">
+
+                  {/* Robot mascot perched above the personal message frame */}
+                  <RobotMascot />
 
                   {/* Ground shadow */}
                   <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 pointer-events-none" style={{

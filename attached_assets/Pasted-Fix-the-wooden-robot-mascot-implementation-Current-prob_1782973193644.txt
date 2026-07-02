@@ -1,0 +1,76 @@
+Fix the wooden robot mascot implementation.
+
+Current problems:
+1. The robot video still shows a bright green background.
+2. The robot is placed in the wrong section. It is currently appearing above the Prologue / Archive 01 video.
+3. I want the robot to appear above the Scene 1 personal video box instead.
+
+Robot file:
+public/assets/videos/wooden-robot-loop.mp4
+
+Important:
+This video has a green screen background. The green background must not be visible on the website.
+
+Placement:
+- Remove the robot mascot from the Prologue / Archive 01 section completely.
+- Add the robot mascot only to Scene 1, above the personal video message box.
+- It should slightly overlap the top edge of the Scene 1 video frame, like a tiny wooden mascot sitting on the frame.
+- It should NOT appear on the first before-we-met video.
+- It should NOT appear in the Prologue section.
+
+Green screen removal:
+Preferred solution:
+- If possible, support a transparent WebM version:
+  public/assets/videos/wooden-robot-loop.webm
+- If the .webm file exists, use it instead of the green-screen mp4.
+
+Fallback solution:
+- If only wooden-robot-loop.mp4 exists, implement chroma key removal for the green background.
+- Remove pixels close to bright green (#00FF00).
+- The robot should render without the green box.
+- Use a canvas-based chroma key component if needed.
+- Do not show the original green rectangle.
+
+Create or update a reusable component:
+RobotMascot
+
+Behavior:
+- autoplay
+- muted
+- loop
+- playsInline
+- preload auto
+- no controls
+- pointer-events: none
+- continuous playback forever
+- no pause
+- no black frame between loops
+- no visible rectangular background
+
+Positioning for Scene 1:
+- The Scene 1 video wrapper should be position: relative.
+- Place RobotMascot absolute above the video frame.
+- top: -70px or visually aligned above the frame
+- left: 50%
+- transform: translateX(-50%)
+- z-index above the video frame
+- Desktop width: 90–120px
+- Mobile width: 60–80px
+- Add a subtle soft shadow under the robot
+- Add a very small warm gold glow if it looks elegant
+- Do not make it too large or distracting
+
+If using the green-screen mp4:
+- Do not render the raw <video> visibly.
+- Use a canvas to draw the video frames and make green pixels transparent.
+- The canvas should preserve the robot only.
+- The green background must be invisible.
+
+If the robot file is missing:
+- Hide the robot gracefully.
+- Do not show broken media.
+
+Also:
+- Remove any current robot element from the Prologue component.
+- Add RobotMascot only inside the Scene 1 component.
+- Make sure it sits above the personal-message video, not above the before-we-met video.
