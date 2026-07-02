@@ -1,0 +1,92 @@
+Redesign the Montage section completely.
+
+I do not want the memory photos to be hidden behind dark overlays or require clicking to see them.
+
+Make this section feel like a cinematic scattered memory wall / scrapbook collage.
+
+Current problem:
+- Photos are too dark
+- Text covers the images
+- User has to click to see the full image
+- The layout feels too structured and card-like
+- I want all photos to be visible directly on the page
+
+New direction:
+Show 8 full photos directly on the page in a beautiful scattered collage layout.
+
+Section label:
+MONTAGE
+
+Main heading:
+تکه‌هایی از ما
+
+Small subtitle:
+خاطره‌هایی که آرام‌آرام قصه شدند
+
+Use Persian / RTL for main text.
+
+Images:
+Use 8 image slots:
+public/assets/images/memory-1.jpg
+public/assets/images/memory-2.jpg
+public/assets/images/memory-3.jpg
+public/assets/images/memory-4.jpg
+public/assets/images/memory-5.jpg
+public/assets/images/memory-6.jpg
+public/assets/images/memory-7.jpg
+public/assets/images/memory-8.jpg
+
+Design requirements:
+- All 8 photos must be visible directly on the page.
+- Do not hide photos behind click.
+- Do not cover the center of photos with large text.
+- Do not crop important parts of the photos.
+- Use object-fit: contain or natural image ratio so each photo is fully visible.
+- Use a scattered scrapbook / polaroid style layout.
+- Some photos can be slightly rotated, like -3deg, 2deg, -1deg, 4deg.
+- Add thin ivory or soft gold borders.
+- Add soft shadows so they feel like physical memories placed on velvet.
+- Add subtle tape/pin/corner details only if elegant, not childish.
+- Keep the dark burgundy velvet background.
+- Keep gold accents and cinematic film grain.
+- Make it look romantic, warm, personal, and luxurious.
+
+Layout:
+Desktop:
+- Create a controlled messy collage.
+- 8 photos arranged across the section, not in a strict boring grid.
+- Different sizes are okay, but every photo must be fully visible.
+- Use a masonry / scrapbook layout.
+- Leave enough breathing room.
+
+Mobile:
+- Stack photos beautifully in one column or two columns.
+- Keep all photos fully visible.
+- Avoid horizontal overflow.
+
+Captions:
+Add optional small captions under or beside each photo, not over the photo.
+Captions should be editable.
+Example captions:
+1. جایی که قصه شروع شد
+2. اولین ردپاهای خاطره
+3. روزی که ساده بود، اما ماند
+4. خنده‌هایی که هنوز روشن‌اند
+5. کنار تو، معمولی‌ها هم قشنگ شدند
+6. یک قاب از ما
+7. شهری که شاهد ما بود
+8. چیزی که دلم نمی‌خواهد فراموش شود
+
+Interaction:
+- Clicking a photo can optionally open it in a lightbox, but the full photo should already be visible on the page.
+- Lightbox is optional, not required for seeing the image.
+
+Remove:
+- Remove the empty video placeholder.
+- Remove “A moment more”.
+- Remove large text overlays on top of photos.
+- Remove dark image overlays unless very subtle on hover only.
+
+Add support for more photos later:
+Make the memory data array easy to extend in src/data/filmContent.js.
+If I add memory-9.jpg or more items later, the collage should still work.

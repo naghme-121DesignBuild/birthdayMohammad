@@ -42,12 +42,14 @@ export const eightFrames = [
 ];
 
 export const memories = [
-  { photo: "photo1", title: "Where it began", caption: "Different cities. One match. A new story." },
-  { photo: "photo2", title: "Santa Monica Pier", caption: "Route 66 — end of the trail, beginning of us." },
-  { photo: "photo3", title: "Malibu Beach", caption: "Beach + sun + backgammon. The perfect day." },
-  { photo: "photo4", title: "Petersen Museum", caption: "A day to remember — legends never die." },
-  { photo: "photo5", title: "Griffith & Hollywood", caption: "Exploring the universe together." },
-  { photo: null, video: "/assets/videos/montage-2.mp4", title: "A moment more", caption: "Proof that time was kind to us." },
+  { src: "/assets/images/memory-1.jpg", caption: "جایی که قصه شروع شد" },
+  { src: "/assets/images/memory-2.jpg", caption: "اولین ردپاهای خاطره" },
+  { src: "/assets/images/memory-3.jpg", caption: "روزی که ساده بود، اما ماند" },
+  { src: "/assets/images/memory-4.jpg", caption: "خنده‌هایی که هنوز روشن‌اند" },
+  { src: "/assets/images/memory-5.jpg", caption: "کنار تو، معمولی‌ها هم قشنگ شدند" },
+  { src: "/assets/images/memory-6.jpg", caption: "یک قاب از ما" },
+  { src: "/assets/images/memory-7.jpg", caption: "شهری که شاهد ما بود" },
+  { src: "/assets/images/memory-8.jpg", caption: "چیزی که دلم نمی‌خواهد فراموش شود" },
 ];
 
 export const voiceNotes = [

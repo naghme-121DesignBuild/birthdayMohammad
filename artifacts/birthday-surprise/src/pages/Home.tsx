@@ -141,6 +141,7 @@ export default function Home() {
   const [showVideo, setShowVideo] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const [secretOpen, setSecretOpen] = useState(false);
+  const [montageIdx, setMontageIdx] = useState<number | null>(null);
   const [introVideoError, setIntroVideoError] = useState(false);
   const [videoMuted, setVideoMuted] = useState(true);
   const [videoPlaying, setVideoPlaying] = useState(false);
@@ -789,13 +790,186 @@ export default function Home() {
             </div>
           </SceneSection>
 
-          {/* SECTION 6: Memory Montage */}
-          <SceneSection className="bg-filmBg2">
-            <SceneLabel>Montage</SceneLabel>
-            <h2 className="font-display text-4xl md:text-5xl text-filmIvory mb-4">Little pieces of us</h2>
-            <p className="font-script text-2xl md:text-3xl text-filmGold/80 mb-4">the moments we share</p>
-            <FilmStrip memories={memories} />
-          </SceneSection>
+          {/* SECTION 6: Memory Montage — scattered collage */}
+          {(() => {
+            const SCATTER = [
+              { rotate: -2.5, mt: 0,  size: "normal" },
+              { rotate:  1.5, mt: 28, size: "wide"   },
+              { rotate: -1.0, mt: 8,  size: "normal" },
+              { rotate:  3.0, mt: 40, size: "normal" },
+              { rotate: -3.0, mt: 4,  size: "wide"   },
+              { rotate:  2.0, mt: 20, size: "normal" },
+              { rotate: -1.5, mt: 36, size: "normal" },
+              { rotate:  2.5, mt: 12, size: "normal" },
+            ];
+            return (
+              <section
+                className="relative w-full overflow-hidden"
+                style={{ background: "linear-gradient(160deg, #170006 0%, #1e0810 50%, #170006 100%)" }}
+              >
+                {/* Film grain */}
+                <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
+                  style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "180px" }} />
+                {/* Warm center glow */}
+                <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(120,15,40,0.14) 0%, transparent 70%)" }} />
+
+                <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 py-20 md:py-28">
+                  {/* Header */}
+                  <motion.div
+                    className="flex flex-col items-center text-center mb-16"
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.1 }}
+                  >
+                    <div className="flex items-center gap-3 mb-6 opacity-50">
+                      <div className="w-8 h-[1px] bg-filmGold" />
+                      <span className="font-ui text-[9px] tracking-[0.5em] text-filmGold uppercase">Montage</span>
+                      <div className="w-8 h-[1px] bg-filmGold" />
+                    </div>
+                    <h2
+                      dir="rtl" lang="fa"
+                      className="font-display mb-3"
+                      style={{ fontSize: "clamp(1.8rem, 5vw, 3rem)", color: "rgba(255,247,236,0.95)", lineHeight: 1.4 }}
+                    >
+                      تکه‌هایی از ما
+                    </h2>
+                    <p
+                      dir="rtl" lang="fa"
+                      style={{
+                        fontFamily: "'Noto Nastaliq Urdu', serif",
+                        fontSize: "clamp(0.9rem, 2vw, 1.15rem)",
+                        color: "rgba(212,175,55,0.6)",
+                        lineHeight: 2.0,
+                      }}
+                    >
+                      خاطره‌هایی که آرام‌آرام قصه شدند
+                    </p>
+                  </motion.div>
+
+                  {/* Scattered collage grid */}
+                  <div className="columns-2 md:columns-3 gap-4 md:gap-6 space-y-4 md:space-y-6">
+                    {memories.map((mem, i) => {
+                      const s = SCATTER[i % SCATTER.length];
+                      return (
+                        <motion.div
+                          key={i}
+                          className={`break-inside-avoid cursor-pointer group${s.size === "wide" ? " md:col-span-2" : ""}`}
+                          style={{ marginTop: `${i > 0 ? 0 : 0}px` }}
+                          initial={{ opacity: 0, y: 24, rotate: 0 }}
+                          whileInView={{ opacity: 1, y: 0, rotate: s.rotate }}
+                          viewport={{ once: true, margin: "-60px" }}
+                          transition={{ duration: 1.0, delay: i * 0.08, ease: "easeOut" }}
+                          whileHover={{ scale: 1.03, rotate: 0, zIndex: 10 }}
+                          onClick={() => setMontageIdx(i)}
+                        >
+                          {/* Polaroid card */}
+                          <div
+                            className="flex flex-col"
+                            style={{
+                              background: "rgba(255,247,236,0.07)",
+                              border: "1px solid rgba(212,175,55,0.22)",
+                              borderRadius: "4px",
+                              padding: "8px 8px 20px",
+                              boxShadow: [
+                                "0 4px 20px rgba(0,0,0,0.55)",
+                                "0 1px 4px rgba(0,0,0,0.4)",
+                                "inset 0 1px 0 rgba(255,247,236,0.06)",
+                              ].join(", "),
+                            }}
+                          >
+                            {/* Photo */}
+                            <div className="overflow-hidden" style={{ borderRadius: "2px", background: "#080002" }}>
+                              <img
+                                src={mem.src}
+                                alt={mem.caption}
+                                className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.04]"
+                                style={{ objectFit: "contain", display: "block" }}
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.opacity = "0.1";
+                                }}
+                              />
+                            </div>
+                            {/* Caption below photo */}
+                            <p
+                              dir="rtl" lang="fa"
+                              className="mt-3 text-center"
+                              style={{
+                                fontFamily: "'Noto Nastaliq Urdu', serif",
+                                fontSize: "0.72rem",
+                                lineHeight: 1.9,
+                                color: "rgba(212,175,55,0.55)",
+                                letterSpacing: "0.01em",
+                              }}
+                            >
+                              {mem.caption}
+                            </p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Lightbox */}
+                <AnimatePresence>
+                  {montageIdx !== null && (
+                    <motion.div
+                      className="fixed inset-0 z-[200] flex items-center justify-center"
+                      style={{ background: "rgba(8,0,2,0.96)" }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      onClick={() => setMontageIdx(null)}
+                    >
+                      <button
+                        onClick={() => setMontageIdx(null)}
+                        className="absolute top-6 right-6 text-filmIvory/40 hover:text-filmGold text-3xl focus:outline-none z-10 transition-colors"
+                      >✕</button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setMontageIdx(((montageIdx - 1) + memories.length) % memories.length); }}
+                        className="absolute left-4 text-filmGold/30 hover:text-filmGold text-5xl focus:outline-none transition-colors hidden sm:block"
+                      >‹</button>
+                      <motion.div
+                        key={montageIdx}
+                        initial={{ opacity: 0, scale: 0.93 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.93 }}
+                        transition={{ duration: 0.3 }}
+                        className="flex flex-col items-center px-4 max-w-4xl w-full"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <img
+                          src={memories[montageIdx].src}
+                          alt={memories[montageIdx].caption}
+                          className="max-h-[75vh] max-w-full object-contain"
+                          style={{
+                            border: "1px solid rgba(212,175,55,0.2)",
+                            borderRadius: "3px",
+                            boxShadow: "0 0 60px rgba(212,175,55,0.08)",
+                          }}
+                        />
+                        <p
+                          dir="rtl" lang="fa"
+                          className="mt-6 text-center"
+                          style={{
+                            fontFamily: "'Noto Nastaliq Urdu', serif",
+                            fontSize: "1rem",
+                            lineHeight: 2.2,
+                            color: "rgba(212,175,55,0.65)",
+                          }}
+                        >{memories[montageIdx].caption}</p>
+                      </motion.div>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setMontageIdx((montageIdx + 1) % memories.length); }}
+                        className="absolute right-4 text-filmGold/30 hover:text-filmGold text-5xl focus:outline-none transition-colors hidden sm:block"
+                      >›</button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </section>
+            );
+          })()}
 
 
           {/* SECTION 8: Secret Scene */}
