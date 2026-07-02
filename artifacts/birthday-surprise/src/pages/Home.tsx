@@ -455,7 +455,7 @@ export default function Home() {
             {/* Warm center glow */}
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 55% at 50% 50%, rgba(100,10,35,0.18) 0%, transparent 70%)" }} />
 
-            <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 py-24 md:py-32 flex flex-col md:flex-row items-center gap-10 md:gap-14">
+            <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 pb-24 md:pb-32 flex flex-col md:flex-row items-center gap-10 md:gap-14" style={{ paddingTop: "0.2rem" }}>
 
               {/* ── TEXT SIDE (58%) ── */}
               <motion.div
