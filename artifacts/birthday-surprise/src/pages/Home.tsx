@@ -788,19 +788,6 @@ export default function Home() {
             </div>
           </section>
 
-          {/* SECTION 4: Scene 2 */}
-          <SceneSection className="bg-filmBg">
-            <SceneLabel>{scenes.scene2.title}</SceneLabel>
-            <h2 className="font-display text-4xl md:text-5xl text-filmIvory mb-8 max-w-3xl">{scenes.scene2.heading}</h2>
-            <p className="font-body text-xl md:text-2xl text-filmIvory/80 leading-relaxed max-w-2xl text-justify mb-12">
-              {scenes.scene2.text}
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-              {scenes.scene2.videos.map((vid, i) => (
-                <VideoFrame key={i} src={vid.src} caption={vid.caption} title={`Movement ${i+1}`} />
-              ))}
-            </div>
-          </SceneSection>
 
           {/* SECTION 5: Voiceover Interlude */}
           <SceneSection className="bg-filmBlack border-y border-filmGold/10">
