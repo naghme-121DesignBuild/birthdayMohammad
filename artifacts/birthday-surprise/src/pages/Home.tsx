@@ -972,31 +972,6 @@ export default function Home() {
           })()}
 
 
-          {/* SECTION 8: Secret Scene */}
-          <SceneSection className="bg-filmBlack flex flex-col items-center">
-            {!secretOpen ? (
-              <button 
-                onClick={() => setSecretOpen(true)}
-                className="px-8 py-4 border border-filmIvory/20 text-filmIvory/40 hover:text-filmIvory hover:border-filmIvory transition-all duration-500 font-ui tracking-widest text-sm uppercase rounded-sm"
-              >
-                Unlock the scene I almost kept to myself
-              </button>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1 }}
-                className="w-full flex flex-col items-center"
-              >
-                <SceneLabel>Secret Scene</SceneLabel>
-                <h2 className="font-display text-4xl md:text-5xl text-filmIvory mb-8">The part I almost whispered</h2>
-                <p className="font-body text-xl md:text-2xl text-filmIvory/80 leading-relaxed max-w-2xl text-center mb-12">
-                  Some things belong only to us.
-                </p>
-                <VideoFrame src="/assets/videos/secret-scene.mp4" title="Secret" caption="For your eyes only." />
-              </motion.div>
-            )}
-          </SceneSection>
 
           {/* SECTION 9: Countdown */}
           <SceneSection className="bg-filmBg2 border-t border-filmGold/20">
