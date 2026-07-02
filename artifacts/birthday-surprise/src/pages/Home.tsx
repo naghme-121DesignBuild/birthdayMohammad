@@ -862,10 +862,6 @@ export default function Home() {
             <div className="relative z-10 flex flex-col items-center max-w-3xl">
               <SceneLabel>Final Scene</SceneLabel>
               
-              <h2 className="font-display text-5xl sm:text-6xl md:text-8xl text-filmGold drop-shadow-[0_0_20px_rgba(212,175,55,0.3)] mb-12">
-                Happy Birthday,<br />{PARTNER_NAME}
-              </h2>
-              
               <p className="font-display italic text-3xl sm:text-4xl text-filmIvory mb-6">
                 You are loved.
               </p>
