@@ -430,8 +430,18 @@ export default function Home() {
                   Before we met, we were already becoming us.
                 </h2>
                 <div className="w-16 h-[1px] bg-filmGold/60 mb-6 mx-auto md:mx-0" />
-                <p className="font-body text-lg md:text-xl text-filmIvory/75 leading-relaxed max-w-md">
-                  Before we stood in the same city, there were calls, little videos, distance, laughter, and the strange feeling that something real was already beginning.
+                <p
+                  dir="rtl"
+                  lang="fa"
+                  className="text-filmGold/90 leading-[2.4] max-w-md text-right"
+                  style={{
+                    fontFamily: "'Noto Nastaliq Urdu', serif",
+                    fontSize: "clamp(1.1rem, 2.5vw, 1.45rem)",
+                    textShadow: "0 0 30px rgba(212,175,55,0.25)",
+                  }}
+                >
+                  چنانت دوست می‌دارم، که گر روزی فراق افتد<br />
+                  تو صبر از من توانی کرد و من صبر از تو نتوانم
                 </p>
               </motion.div>
 
