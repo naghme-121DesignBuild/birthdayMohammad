@@ -69,6 +69,72 @@ function PrologueVideo() {
   );
 }
 
+function PersonalMessageVideo() {
+  const [missing, setMissing] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const vidRef = useRef<HTMLVideoElement>(null);
+
+  const handlePlay = () => {
+    if (!vidRef.current) return;
+    vidRef.current.play().then(() => setPlaying(true)).catch(() => {});
+  };
+
+  if (missing) {
+    return (
+      <div className="w-full aspect-video bg-filmBlack/60 flex items-center justify-center">
+        <div className="w-14 h-14 rounded-full border border-filmGold/20 flex items-center justify-center">
+          <span className="text-filmGold/25 text-2xl ml-1">▶</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full">
+      <video
+        ref={vidRef}
+        src="/assets/videos/personal-message.mp4"
+        playsInline
+        preload="metadata"
+        controls={playing}
+        className="w-full object-contain block"
+        style={{ maxHeight: "80vh" }}
+        onError={() => setMissing(true)}
+        onEnded={() => setPlaying(false)}
+      />
+      <AnimatePresence>
+        {!playing && (
+          <motion.div
+            className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"
+            style={{
+              background: "linear-gradient(to bottom, rgba(8,0,2,0.25) 0%, rgba(8,0,2,0.05) 40%, rgba(8,0,2,0.5) 100%)",
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            onClick={handlePlay}
+          >
+            <motion.div
+              className="w-20 h-20 rounded-full flex items-center justify-center"
+              style={{
+                background: "rgba(212,175,55,0.1)",
+                border: "1px solid rgba(212,175,55,0.55)",
+                boxShadow: "0 0 40px rgba(212,175,55,0.2), inset 0 0 20px rgba(212,175,55,0.05)",
+              }}
+              animate={{ scale: [1, 1.06, 1] }}
+              transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }}
+            >
+              <span className="text-filmGold text-3xl ml-1.5">▶</span>
+            </motion.div>
+            <p className="mt-5 font-ui text-[9px] tracking-[0.4em] text-filmGold/50 uppercase">پخش</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpening, setIsOpening] = useState(false);
@@ -557,15 +623,252 @@ export default function Home() {
             </div>
           </section>
 
-          {/* SECTION 3: Scene 1 */}
-          <SceneSection className="bg-filmBg2">
-            <SceneLabel>{scenes.scene1.title}</SceneLabel>
-            <h2 className="font-display text-4xl md:text-6xl text-filmIvory mb-8 max-w-3xl">{scenes.scene1.heading}</h2>
-            <p className="font-body text-xl md:text-2xl text-filmIvory/80 leading-relaxed max-w-2xl text-justify mb-12">
-              {scenes.scene1.text}
-            </p>
-            <VideoFrame src={scenes.scene1.video.src} caption={scenes.scene1.video.caption} title="The Beginning" />
-          </SceneSection>
+          {/* TRANSITION BRIDGE: Prologue → Scene 1 */}
+          <section
+            className="relative w-full overflow-hidden flex flex-col items-center justify-center"
+            style={{
+              minHeight: "40vh",
+              background: "linear-gradient(to bottom, #1a0510 0%, #0d0005 60%, #120008 100%)",
+            }}
+          >
+            <div className="absolute inset-0 pointer-events-none" style={{
+              background: "radial-gradient(ellipse 60% 80% at 50% 50%, rgba(212,175,55,0.04) 0%, transparent 70%)",
+            }} />
+            <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "180px" }} />
+
+            <div className="relative z-10 flex flex-col items-center gap-8 px-6 py-20 text-center">
+              {/* Thin gold line above */}
+              <motion.div
+                className="w-px bg-gradient-to-b from-transparent via-filmGold/40 to-transparent"
+                initial={{ height: 0, opacity: 0 }}
+                whileInView={{ height: 64, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+              />
+
+              {/* Line 1 */}
+              <motion.p
+                dir="rtl"
+                lang="fa"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: 0.3 }}
+                style={{
+                  fontFamily: "'Noto Nastaliq Urdu', serif",
+                  fontSize: "clamp(1.1rem, 3vw, 1.6rem)",
+                  color: "rgba(255,247,236,0.55)",
+                  lineHeight: 2.2,
+                  textShadow: "0 0 40px rgba(212,175,55,0.15)",
+                }}
+              >
+                و بعد از همه‌ی آن فاصله‌ها...
+              </motion.p>
+
+              {/* Gold dot */}
+              <motion.div
+                className="w-1 h-1 rounded-full bg-filmGold/40"
+                initial={{ opacity: 0, scale: 0 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.9 }}
+              />
+
+              {/* Line 2 */}
+              <motion.p
+                dir="rtl"
+                lang="fa"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: 1.1 }}
+                style={{
+                  fontFamily: "'Noto Nastaliq Urdu', serif",
+                  fontSize: "clamp(1.1rem, 3vw, 1.6rem)",
+                  color: "rgba(212,175,55,0.75)",
+                  lineHeight: 2.2,
+                  textShadow: "0 0 40px rgba(212,175,55,0.25)",
+                }}
+              >
+                این قسمت را خودم باید می‌گفتم.
+              </motion.p>
+
+              {/* Thin gold line below */}
+              <motion.div
+                className="w-px bg-gradient-to-b from-transparent via-filmGold/40 to-transparent"
+                initial={{ height: 0, opacity: 0 }}
+                whileInView={{ height: 64, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: 1.5, ease: "easeOut" }}
+              />
+            </div>
+          </section>
+
+          {/* SECTION 3: Scene 1 — Personal Message */}
+          <section
+            className="relative w-full overflow-hidden"
+            style={{ background: "linear-gradient(160deg, #120008 0%, #1c0610 50%, #120008 100%)" }}
+          >
+            <div className="absolute inset-0 pointer-events-none opacity-[0.035]"
+              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "180px" }} />
+            <div className="absolute inset-0 pointer-events-none" style={{
+              background: "radial-gradient(ellipse 70% 55% at 50% 30%, rgba(139,0,50,0.12) 0%, transparent 65%)",
+            }} />
+
+            <div className="relative z-10 max-w-4xl mx-auto px-6 md:px-12 py-20 md:py-28 flex flex-col items-center">
+
+              {/* Scene label */}
+              <motion.div
+                className="flex items-center gap-3 mb-10 opacity-50"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 0.5 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1 }}
+              >
+                <div className="w-10 h-[1px] bg-filmGold" />
+                <span className="font-ui text-[9px] tracking-[0.5em] text-filmGold uppercase">Scene 1</span>
+                <div className="w-10 h-[1px] bg-filmGold" />
+              </motion.div>
+
+              {/* Heading */}
+              <motion.h2
+                dir="rtl"
+                lang="fa"
+                className="text-center mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: 0.1 }}
+                style={{
+                  fontFamily: "'Noto Nastaliq Urdu', serif",
+                  fontSize: "clamp(1.4rem, 4vw, 2.2rem)",
+                  color: "rgba(255,247,236,0.95)",
+                  lineHeight: 2.0,
+                  textShadow: "0 0 40px rgba(255,247,236,0.08)",
+                }}
+              >
+                این قسمت را خودم باید می‌گفتم
+              </motion.h2>
+
+              {/* Gold divider */}
+              <motion.div
+                className="flex items-center gap-4 mb-10"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.3 }}
+              >
+                <div className="w-16 h-[1px] bg-filmGold/40" />
+                <div className="w-1.5 h-1.5 rounded-full bg-filmGold/35" />
+                <div className="w-16 h-[1px] bg-filmGold/40" />
+              </motion.div>
+
+              {/* Body text */}
+              <motion.div
+                dir="rtl"
+                lang="fa"
+                className="text-center mb-14 max-w-2xl"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: 0.2 }}
+                style={{
+                  fontFamily: "'Noto Nastaliq Urdu', serif",
+                  fontSize: "clamp(0.95rem, 2.2vw, 1.2rem)",
+                  color: "rgba(255,247,236,0.6)",
+                  lineHeight: 2.8,
+                }}
+              >
+                <p>بعضی حرف‌ها را نمی‌شود لای متن‌ها پنهان کرد.</p>
+                <p>بعضی حس‌ها باید با صدا گفته شوند،</p>
+                <p>با مکث،</p>
+                <p>با نگاه،</p>
+                <p>با همان لرز کوچکی که آدم وقتی از دلش حرف می‌زند، دارد.</p>
+              </motion.div>
+
+              {/* Personal video frame */}
+              <motion.div
+                className="w-full flex flex-col items-center"
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.4, delay: 0.3, ease: "easeOut" }}
+              >
+                {/* Ambient glow */}
+                <div className="absolute pointer-events-none" style={{
+                  width: "600px", height: "400px",
+                  background: "radial-gradient(ellipse, rgba(139,0,50,0.2) 0%, rgba(212,175,55,0.05) 50%, transparent 70%)",
+                  filter: "blur(40px)",
+                }} />
+
+                {/* Frame container — flexible for any aspect ratio */}
+                <div className="relative w-full max-w-2xl">
+
+                  {/* Ground shadow */}
+                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 pointer-events-none" style={{
+                    width: "70%", height: "60px",
+                    background: "rgba(0,0,0,0.55)",
+                    filter: "blur(24px)",
+                    borderRadius: "50%",
+                  }} />
+
+                  {/* The cinematic frame */}
+                  <div
+                    className="relative rounded-xl overflow-hidden"
+                    style={{
+                      border: "1px solid rgba(212,175,55,0.25)",
+                      background: "#080002",
+                      boxShadow: [
+                        "0 0 0 1px rgba(255,247,236,0.025)",
+                        "inset 0 0 60px rgba(0,0,0,0.8)",
+                        "inset 0 1px 0 rgba(212,175,55,0.1)",
+                        "0 40px 100px rgba(0,0,0,0.7)",
+                        "0 12px 40px rgba(100,10,35,0.3)",
+                      ].join(", "),
+                    }}
+                  >
+                    <PersonalMessageVideo />
+
+                    {/* Glass sheen */}
+                    <div className="absolute inset-0 pointer-events-none" style={{
+                      background: "linear-gradient(145deg, rgba(255,247,236,0.05) 0%, rgba(255,247,236,0.01) 20%, transparent 45%)",
+                    }} />
+                  </div>
+
+                  {/* Corner marks */}
+                  {[
+                    "top-0 left-0 border-t border-l rounded-tl",
+                    "top-0 right-0 border-t border-r rounded-tr",
+                    "bottom-0 left-0 border-b border-l rounded-bl",
+                    "bottom-0 right-0 border-b border-r rounded-br",
+                  ].map((cls, i) => (
+                    <div key={i} className={`absolute w-4 h-4 pointer-events-none ${cls}`}
+                      style={{ borderColor: "rgba(212,175,55,0.4)" }} />
+                  ))}
+                </div>
+
+                {/* Caption */}
+                <div className="mt-8 flex flex-col items-center">
+                  <div className="w-12 h-[1px] bg-filmGold/25 mb-4" />
+                  <p
+                    dir="rtl"
+                    lang="fa"
+                    className="text-center"
+                    style={{
+                      fontFamily: "'Noto Nastaliq Urdu', serif",
+                      fontSize: "0.85rem",
+                      lineHeight: 2.2,
+                      color: "rgba(255,247,236,0.4)",
+                    }}
+                  >
+                    برای تو، بی‌واسطه‌تر از هر نوشته‌ای.
+                  </p>
+                </div>
+              </motion.div>
+
+            </div>
+          </section>
 
           {/* SECTION 4: Scene 2 */}
           <SceneSection className="bg-filmBg">
