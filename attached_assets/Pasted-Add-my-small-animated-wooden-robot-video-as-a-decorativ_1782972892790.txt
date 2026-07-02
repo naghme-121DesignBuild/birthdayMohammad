@@ -1,0 +1,73 @@
+Add my small animated wooden robot video as a decorative looping mascot above the Prologue video frame.
+
+Use this file:
+public/assets/videos/wooden-robot-loop.mp4
+
+Goal:
+The robot animation must play continuously in a seamless loop and must never appear to stop, freeze, or show controls.
+It should feel like a tiny animated charm sitting above the video box.
+
+Implementation requirements:
+
+1. Placement
+- Position the robot above the Prologue video frame.
+- It should slightly overlap the top edge of the frame, like it is sitting on it.
+- Center it horizontally above the frame, or slightly offset if it looks better.
+- Desktop size: around 90–120px wide
+- Mobile size: around 60–80px wide
+- Add a soft shadow and a subtle gold/burgundy glow so it blends with the page.
+
+2. Playback behavior
+- The robot animation must:
+  - autoplay
+  - muted
+  - loop
+  - playsInline
+  - preload="auto"
+- Do not show video controls.
+- It must start automatically when the page loads.
+- It must keep replaying forever without interruption.
+- It must not pause after one cycle.
+- It must not show a black frame between loops.
+- It must not flicker or visibly restart.
+
+3. Seamless loop fallback
+Even if the browser does not loop perfectly, force seamless replay with JavaScript fallback:
+- listen for the "ended" event
+- when ended, immediately set currentTime = 0
+- call play() again
+- also handle cases where autoplay is blocked and retry muted play after load if needed
+
+4. Visual styling
+- Background of the robot video should not look like a visible rectangular box.
+- If the file has transparency, preserve it.
+- If the file has a solid removable background, blend it cleanly if possible.
+- Keep the robot isolated and elegant.
+- No border around the robot video.
+- No visible player UI.
+- No stretching.
+- Use object-fit: contain.
+
+5. Layering
+- The robot should appear above the Prologue video frame using absolute positioning.
+- Make sure z-index places it above the frame but below anything that would feel distracting.
+- It should not block important text.
+
+6. Graceful fallback
+- If the robot video file is missing, hide this element completely without breaking layout.
+
+7. Performance
+- Keep it lightweight.
+- The loop should be smooth on desktop and mobile.
+- Avoid unnecessary re-renders.
+
+Suggested structure:
+- Create a dedicated component like <RobotMascot />
+- Place it inside the Prologue section container
+- Use CSS for positioning
+- Use a ref in React to ensure continuous playback
+
+Important:
+This is a decorative looping mascot, not a normal video player.
+It should always feel alive and continuously moving.
+No pause, no cut, no controls, no interruption.

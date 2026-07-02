@@ -48,6 +48,63 @@ function SceneLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+function RobotMascot() {
+  const vidRef = useRef<HTMLVideoElement>(null);
+  const [missing, setMissing] = useState(false);
+
+  useEffect(() => {
+    const vid = vidRef.current;
+    if (!vid) return;
+
+    const ensurePlay = () => {
+      vid.currentTime = 0;
+      vid.play().catch(() => {});
+    };
+
+    vid.addEventListener("ended", ensurePlay);
+
+    // Attempt autoplay (muted always allows it)
+    vid.play().catch(() => {
+      vid.muted = true;
+      vid.play().catch(() => {});
+    });
+
+    return () => vid.removeEventListener("ended", ensurePlay);
+  }, []);
+
+  if (missing) return null;
+
+  return (
+    <div
+      className="flex justify-center"
+      style={{ marginBottom: "-24px", position: "relative", zIndex: 10 }}
+    >
+      <video
+        ref={vidRef}
+        src="/assets/videos/wooden-robot-loop.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        onError={() => setMissing(true)}
+        style={{
+          width: "clamp(60px, 8vw, 110px)",
+          objectFit: "contain",
+          background: "transparent",
+          border: "none",
+          outline: "none",
+          display: "block",
+          filter: [
+            "drop-shadow(0 4px 14px rgba(212,175,55,0.35))",
+            "drop-shadow(0 2px 8px rgba(100,10,35,0.5))",
+          ].join(" "),
+        }}
+      />
+    </div>
+  );
+}
+
 function PrologueVideo() {
   const [missing, setMissing] = useState(false);
 
@@ -548,6 +605,9 @@ export default function Home() {
                     filter: "blur(22px)",
                     borderRadius: "50%",
                   }} />
+
+                  {/* Robot mascot — sits on top of the frame */}
+                  <RobotMascot />
 
                   {/* The cinematic frame */}
                   <div className="relative rounded-2xl overflow-hidden" style={{
