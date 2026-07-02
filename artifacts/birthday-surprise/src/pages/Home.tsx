@@ -54,12 +54,12 @@ function PrologueVideo() {
 
   if (missing) {
     return (
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center">
-        <div className="w-10 h-10 rounded-full border border-filmGold/30 flex items-center justify-center">
-          <span className="text-filmGold/40 text-lg">▶</span>
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center">
+        <div className="w-12 h-12 rounded-full border border-filmGold/25 flex items-center justify-center">
+          <span className="text-filmGold/35 text-xl ml-0.5">▶</span>
         </div>
-        <p className="font-ui text-[10px] tracking-widest text-filmGold/30 uppercase leading-relaxed">
-          Video coming<br />soon
+        <p className="font-ui text-[9px] tracking-[0.25em] text-filmGold/30 uppercase leading-loose">
+          Memory<br />Preserved
         </p>
       </div>
     );
@@ -73,7 +73,6 @@ function PrologueVideo() {
       preload="metadata"
       className="absolute inset-0 w-full h-full object-cover"
       onError={() => setMissing(true)}
-      style={{ paddingTop: "2rem" }}
     />
   );
 }
@@ -445,45 +444,110 @@ export default function Home() {
                 </p>
               </motion.div>
 
-              {/* PHONE FRAME SIDE */}
+              {/* CINEMATIC ARCHIVE FRAME */}
               <motion.div
                 className="flex-shrink-0 flex flex-col items-center order-1 md:order-2"
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 1.2, delay: 0.2 }}
+                transition={{ duration: 1.4, delay: 0.15, ease: "easeOut" }}
               >
-                {/* Gold glow blob behind frame */}
-                <div className="absolute w-64 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(212,175,55,0.18) 0%, transparent 70%)" }} />
+                {/* Ambient glow layers behind the frame */}
+                <div className="absolute pointer-events-none" style={{
+                  width: "340px", height: "520px",
+                  background: "radial-gradient(ellipse 70% 80% at 50% 50%, rgba(139,0,50,0.28) 0%, rgba(212,175,55,0.09) 45%, transparent 75%)",
+                  filter: "blur(28px)",
+                  transform: "translateY(10px)",
+                }} />
+                <div className="absolute pointer-events-none" style={{
+                  width: "220px", height: "360px",
+                  background: "radial-gradient(ellipse, rgba(212,175,55,0.12) 0%, transparent 70%)",
+                  filter: "blur(16px)",
+                }} />
 
-                {/* Phone frame container */}
-                <div className="relative" style={{ width: "min(260px, 72vw)" }}>
-                  {/* Outer glow ring */}
-                  <div className="absolute -inset-3 rounded-[2.8rem] pointer-events-none" style={{ boxShadow: "0 0 40px 8px rgba(212,175,55,0.15), 0 0 80px 20px rgba(139,0,50,0.2)" }} />
-
-                  {/* Phone shell */}
-                  <div className="relative rounded-[2.5rem] border border-filmGold/40 overflow-hidden bg-filmBlack shadow-2xl"
-                    style={{ aspectRatio: "9/16", boxShadow: "inset 0 0 30px rgba(0,0,0,0.6), 0 20px 60px rgba(0,0,0,0.5)" }}>
-
-                    {/* Top notch */}
-                    <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-5 bg-filmBlack rounded-full z-10 border border-filmGold/20" />
-
-                    {/* Video or placeholder */}
-                    <PrologueVideo />
-
-                    {/* Inner frame shine */}
-                    <div className="absolute inset-0 pointer-events-none rounded-[2.5rem]" style={{ background: "linear-gradient(135deg, rgba(212,175,55,0.06) 0%, transparent 50%, rgba(0,0,0,0.2) 100%)" }} />
-                  </div>
-
-                  {/* Gold border accent lines */}
-                  <div className="absolute top-6 left-0 w-[2px] h-8 bg-filmGold/40 rounded-full" />
-                  <div className="absolute top-6 right-0 w-[2px] h-8 bg-filmGold/40 rounded-full" />
+                {/* Archive label above frame */}
+                <div className="flex items-center gap-3 mb-3 opacity-50">
+                  <div className="w-6 h-[1px] bg-filmGold/60" />
+                  <span className="font-ui text-[9px] tracking-[0.4em] text-filmGold uppercase">Archive — 01</span>
+                  <div className="w-6 h-[1px] bg-filmGold/60" />
                 </div>
 
-                {/* Caption */}
-                <p className="mt-5 font-body italic text-filmGold/60 text-sm text-center max-w-[260px]">
-                  "Before the first real hug, there was this."
-                </p>
+                {/* The frame itself */}
+                <div className="relative" style={{ width: "min(248px, 68vw)" }}>
+
+                  {/* Cinematic drop shadow beneath */}
+                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 pointer-events-none" style={{
+                    width: "80%", height: "40px",
+                    background: "rgba(0,0,0,0.55)",
+                    filter: "blur(18px)",
+                    borderRadius: "50%",
+                  }} />
+
+                  {/* Frame border — very thin gold */}
+                  <div className="relative rounded-xl overflow-hidden"
+                    style={{
+                      aspectRatio: "9/16",
+                      border: "1px solid rgba(212,175,55,0.32)",
+                      boxShadow: [
+                        "0 0 0 1px rgba(255,247,236,0.04)",          // outer ivory whisper
+                        "inset 0 0 40px rgba(0,0,0,0.7)",            // deep inner shadow
+                        "inset 0 1px 0 rgba(212,175,55,0.15)",       // top inner gold line
+                        "0 32px 80px rgba(0,0,0,0.6)",               // cinematic ground shadow
+                        "0 8px 24px rgba(139,0,50,0.2)",             // burgundy lift
+                      ].join(", "),
+                      background: "#0d0005",
+                    }}>
+
+                    {/* Video */}
+                    <PrologueVideo />
+
+                    {/* Glass surface reflection — top-left diagonal */}
+                    <div className="absolute inset-0 pointer-events-none" style={{
+                      background: "linear-gradient(135deg, rgba(255,247,236,0.07) 0%, rgba(255,247,236,0.02) 30%, transparent 55%)",
+                    }} />
+
+                    {/* Bottom vignette to blend controls gracefully */}
+                    <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none" style={{
+                      background: "linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 100%)",
+                    }} />
+
+                    {/* Timestamp — bottom right, very subtle */}
+                    <span className="absolute bottom-3 right-3 font-ui text-[9px] tracking-widest text-filmGold/30 pointer-events-none select-none">
+                      00:18
+                    </span>
+                  </div>
+
+                  {/* Corner accent marks — top-left */}
+                  <div className="absolute top-0 left-0 w-4 h-4 pointer-events-none" style={{
+                    borderTop: "1px solid rgba(212,175,55,0.5)",
+                    borderLeft: "1px solid rgba(212,175,55,0.5)",
+                    borderRadius: "4px 0 0 0",
+                  }} />
+                  {/* Corner accent marks — bottom-right */}
+                  <div className="absolute bottom-0 right-0 w-4 h-4 pointer-events-none" style={{
+                    borderBottom: "1px solid rgba(212,175,55,0.5)",
+                    borderRight: "1px solid rgba(212,175,55,0.5)",
+                    borderRadius: "0 0 4px 0",
+                  }} />
+                </div>
+
+                {/* Caption — Persian, elegant */}
+                <div className="mt-6 flex flex-col items-center gap-1">
+                  <div className="w-8 h-[1px] bg-filmGold/30 mb-2" />
+                  <p
+                    dir="rtl"
+                    lang="fa"
+                    className="text-center text-filmIvory/50 leading-relaxed"
+                    style={{
+                      fontFamily: "'Noto Nastaliq Urdu', serif",
+                      fontSize: "0.78rem",
+                      maxWidth: "220px",
+                    }}
+                  >
+                    پیش از اولین دیدار،<br />
+                    چیزی میان ما آغاز شده بود.
+                  </p>
+                </div>
               </motion.div>
 
             </div>
