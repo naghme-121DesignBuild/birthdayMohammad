@@ -51,29 +51,64 @@ function SceneLabel({ children }: { children: React.ReactNode }) {
 
 function PrologueVideo() {
   const [missing, setMissing] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const vidRef = useRef<HTMLVideoElement>(null);
+
+  const handlePlay = () => {
+    if (!vidRef.current) return;
+    vidRef.current.play().then(() => setPlaying(true)).catch(() => {});
+  };
 
   if (missing) {
     return (
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center">
-        <div className="w-12 h-12 rounded-full border border-filmGold/25 flex items-center justify-center">
-          <span className="text-filmGold/35 text-xl ml-0.5">▶</span>
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+        <div className="w-14 h-14 rounded-full border border-filmGold/20 flex items-center justify-center">
+          <span className="text-filmGold/25 text-2xl ml-1">▶</span>
         </div>
-        <p className="font-ui text-[9px] tracking-[0.25em] text-filmGold/30 uppercase leading-loose">
-          Memory<br />Preserved
-        </p>
       </div>
     );
   }
 
   return (
-    <video
-      src="/assets/videos/before-we-met-1.mp4"
-      controls
-      playsInline
-      preload="metadata"
-      className="absolute inset-0 w-full h-full object-cover"
-      onError={() => setMissing(true)}
-    />
+    <>
+      <video
+        ref={vidRef}
+        src="/assets/videos/before-we-met-1.mp4"
+        playsInline
+        preload="metadata"
+        controls={playing}
+        className="absolute inset-0 w-full h-full object-cover"
+        onError={() => setMissing(true)}
+        onEnded={() => setPlaying(false)}
+      />
+      <AnimatePresence>
+        {!playing && (
+          <motion.div
+            className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"
+            style={{ background: "linear-gradient(to bottom, rgba(13,0,5,0.3) 0%, rgba(13,0,5,0.1) 40%, rgba(13,0,5,0.55) 100%)" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            onClick={handlePlay}
+          >
+            <motion.div
+              className="w-16 h-16 rounded-full flex items-center justify-center"
+              style={{
+                background: "rgba(212,175,55,0.12)",
+                border: "1px solid rgba(212,175,55,0.5)",
+                boxShadow: "0 0 30px rgba(212,175,55,0.2)",
+              }}
+              animate={{ scale: [1, 1.06, 1] }}
+              transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+            >
+              <span className="text-filmGold text-2xl ml-1">▶</span>
+            </motion.div>
+            <p className="mt-4 font-ui text-[9px] tracking-[0.35em] text-filmGold/50 uppercase">Play memory</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -410,142 +445,155 @@ export default function Home() {
           </section>
 
           {/* SECTION 2: Prologue */}
-          <section className="relative w-full py-24 px-4 overflow-hidden" style={{ background: "linear-gradient(135deg, #1a0510 0%, #2a0a1a 50%, #1a0510 100%)" }}>
-            {/* subtle grain — inherited from parent, add extra depth */}
-            <div className="absolute inset-0 pointer-events-none opacity-30" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(139,0,50,0.15) 0%, transparent 70%)" }} />
+          <section
+            className="relative w-full overflow-hidden"
+            style={{ background: "linear-gradient(160deg, #180410 0%, #240815 40%, #1a0510 100%)" }}
+          >
+            {/* Film grain texture layer */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
+              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "180px" }} />
+            {/* Warm center glow */}
+            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 55% at 50% 50%, rgba(100,10,35,0.18) 0%, transparent 70%)" }} />
 
-            <div className="relative z-10 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-20">
+            <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 py-24 md:py-32 flex flex-col md:flex-row items-center gap-10 md:gap-14">
 
-              {/* TEXT SIDE */}
+              {/* ── TEXT SIDE (58%) ── */}
               <motion.div
-                className="flex-1 flex flex-col items-center md:items-start text-center md:text-left order-2 md:order-1"
-                initial={{ opacity: 0, x: -30 }}
+                className="w-full md:w-[58%] flex flex-col items-center md:items-start text-center md:text-left order-2 md:order-1 shrink-0"
+                initial={{ opacity: 0, x: -24 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 1.2 }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
               >
-                <SceneLabel>Prologue</SceneLabel>
-                <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-filmIvory leading-tight mb-6 max-w-lg">
-                  Before we met, we were already becoming us.
-                </h2>
-                <div className="w-16 h-[1px] bg-filmGold/60 mb-6 mx-auto md:mx-0" />
-                <p
-                  dir="rtl"
-                  lang="fa"
-                  className="text-filmGold/90 leading-[2.4] max-w-md text-right"
-                  style={{
-                    fontFamily: "'Noto Nastaliq Urdu', serif",
-                    fontSize: "clamp(1.1rem, 2.5vw, 1.45rem)",
-                    textShadow: "0 0 30px rgba(212,175,55,0.25)",
-                  }}
-                >
-                  چنانت دوست می‌دارم، که گر روزی فراق افتد<br />
-                  تو صبر از من توانی کرد و من صبر از تو نتوانم
-                </p>
-              </motion.div>
-
-              {/* CINEMATIC ARCHIVE FRAME */}
-              <motion.div
-                className="flex-shrink-0 flex flex-col items-center order-1 md:order-2"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.4, delay: 0.15, ease: "easeOut" }}
-              >
-                {/* Ambient glow layers behind the frame */}
-                <div className="absolute pointer-events-none" style={{
-                  width: "340px", height: "520px",
-                  background: "radial-gradient(ellipse 70% 80% at 50% 50%, rgba(139,0,50,0.28) 0%, rgba(212,175,55,0.09) 45%, transparent 75%)",
-                  filter: "blur(28px)",
-                  transform: "translateY(10px)",
-                }} />
-                <div className="absolute pointer-events-none" style={{
-                  width: "220px", height: "360px",
-                  background: "radial-gradient(ellipse, rgba(212,175,55,0.12) 0%, transparent 70%)",
-                  filter: "blur(16px)",
-                }} />
-
-                {/* Archive label above frame */}
-                <div className="flex items-center gap-3 mb-3 opacity-50">
-                  <div className="w-6 h-[1px] bg-filmGold/60" />
-                  <span className="font-ui text-[9px] tracking-[0.4em] text-filmGold uppercase">Archive — 01</span>
-                  <div className="w-6 h-[1px] bg-filmGold/60" />
+                {/* Label */}
+                <div className="flex items-center gap-3 mb-7 opacity-60 mx-auto md:mx-0">
+                  <div className="w-8 h-[1px] bg-filmGold" />
+                  <span className="font-ui text-[9px] tracking-[0.45em] text-filmGold uppercase">Prologue</span>
+                  <div className="w-8 h-[1px] bg-filmGold" />
                 </div>
 
-                {/* The frame itself */}
-                <div className="relative" style={{ width: "min(248px, 68vw)" }}>
+                {/* Main heading */}
+                <h2 className="font-display text-3xl sm:text-4xl md:text-[2.6rem] text-filmIvory leading-[1.25] mb-8 max-w-md">
+                  Before we met, we were already becoming us.
+                </h2>
 
-                  {/* Cinematic drop shadow beneath */}
-                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 pointer-events-none" style={{
-                    width: "80%", height: "40px",
-                    background: "rgba(0,0,0,0.55)",
-                    filter: "blur(18px)",
+                {/* Gold divider */}
+                <div className="flex items-center gap-4 mb-8 mx-auto md:mx-0">
+                  <div className="w-12 h-[1px] bg-filmGold/50" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-filmGold/40" />
+                  <div className="w-12 h-[1px] bg-filmGold/50" />
+                </div>
+
+                {/* Poem — refined quote block */}
+                <div className="relative mx-auto md:mx-0 max-w-sm w-full">
+                  {/* Left gold bar */}
+                  <div className="absolute left-0 top-0 bottom-0 w-[2px] rounded-full md:block hidden"
+                    style={{ background: "linear-gradient(to bottom, transparent, rgba(212,175,55,0.5), transparent)" }} />
+                  <blockquote
+                    dir="rtl"
+                    lang="fa"
+                    className="md:pl-6 text-right"
+                    style={{
+                      fontFamily: "'Noto Nastaliq Urdu', serif",
+                      fontSize: "clamp(1rem, 2.2vw, 1.3rem)",
+                      lineHeight: "2.6",
+                      color: "rgba(212,175,55,0.85)",
+                      textShadow: "0 0 40px rgba(212,175,55,0.2)",
+                    }}
+                  >
+                    <p>چنانت دوست می‌دارم، که گر روزی فراق افتد</p>
+                    <p>تو صبر از من توانی کرد و من صبر از تو نتوانم</p>
+                  </blockquote>
+                </div>
+              </motion.div>
+
+              {/* ── FRAME SIDE (42%) ── */}
+              <motion.div
+                className="w-full md:w-[42%] flex flex-col items-center order-1 md:order-2 shrink-0"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.4, delay: 0.18, ease: "easeOut" }}
+              >
+                {/* Ambient glow behind frame */}
+                <div className="absolute pointer-events-none" style={{
+                  width: "380px", height: "560px",
+                  background: "radial-gradient(ellipse 65% 75% at 50% 48%, rgba(139,0,50,0.3) 0%, rgba(212,175,55,0.07) 50%, transparent 72%)",
+                  filter: "blur(32px)",
+                }} />
+
+                {/* Archive label */}
+                <div className="flex items-center gap-2.5 mb-4 opacity-40">
+                  <div className="w-5 h-[1px] bg-filmGold" />
+                  <span className="font-ui text-[8px] tracking-[0.5em] text-filmGold uppercase">Archive — 01</span>
+                  <div className="w-5 h-[1px] bg-filmGold" />
+                </div>
+
+                {/* Frame wrapper */}
+                <div className="relative" style={{ width: "min(290px, 74vw)" }}>
+
+                  {/* Ground shadow */}
+                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 pointer-events-none" style={{
+                    width: "75%", height: "50px",
+                    background: "rgba(0,0,0,0.6)",
+                    filter: "blur(22px)",
                     borderRadius: "50%",
                   }} />
 
-                  {/* Frame border — very thin gold */}
-                  <div className="relative rounded-xl overflow-hidden"
-                    style={{
-                      aspectRatio: "9/16",
-                      border: "1px solid rgba(212,175,55,0.32)",
-                      boxShadow: [
-                        "0 0 0 1px rgba(255,247,236,0.04)",          // outer ivory whisper
-                        "inset 0 0 40px rgba(0,0,0,0.7)",            // deep inner shadow
-                        "inset 0 1px 0 rgba(212,175,55,0.15)",       // top inner gold line
-                        "0 32px 80px rgba(0,0,0,0.6)",               // cinematic ground shadow
-                        "0 8px 24px rgba(139,0,50,0.2)",             // burgundy lift
-                      ].join(", "),
-                      background: "#0d0005",
-                    }}>
-
-                    {/* Video */}
+                  {/* The cinematic frame */}
+                  <div className="relative rounded-2xl overflow-hidden" style={{
+                    aspectRatio: "9/16",
+                    border: "1px solid rgba(212,175,55,0.28)",
+                    background: "#0a0003",
+                    boxShadow: [
+                      "0 0 0 1px rgba(255,247,236,0.03)",
+                      "inset 0 0 50px rgba(0,0,0,0.75)",
+                      "inset 0 1px 0 rgba(212,175,55,0.12)",
+                      "0 40px 100px rgba(0,0,0,0.65)",
+                      "0 12px 30px rgba(100,10,35,0.25)",
+                    ].join(", "),
+                  }}>
                     <PrologueVideo />
 
-                    {/* Glass surface reflection — top-left diagonal */}
+                    {/* Glass sheen */}
                     <div className="absolute inset-0 pointer-events-none" style={{
-                      background: "linear-gradient(135deg, rgba(255,247,236,0.07) 0%, rgba(255,247,236,0.02) 30%, transparent 55%)",
+                      background: "linear-gradient(145deg, rgba(255,247,236,0.06) 0%, rgba(255,247,236,0.01) 25%, transparent 50%)",
                     }} />
 
-                    {/* Bottom vignette to blend controls gracefully */}
-                    <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none" style={{
-                      background: "linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 100%)",
-                    }} />
-
-                    {/* Timestamp — bottom right, very subtle */}
-                    <span className="absolute bottom-3 right-3 font-ui text-[9px] tracking-widest text-filmGold/30 pointer-events-none select-none">
+                    {/* Timestamp */}
+                    <span className="absolute bottom-2.5 right-3 font-ui text-[8px] tracking-[0.3em] text-filmGold/25 pointer-events-none select-none">
                       00:18
                     </span>
                   </div>
 
-                  {/* Corner accent marks — top-left */}
-                  <div className="absolute top-0 left-0 w-4 h-4 pointer-events-none" style={{
-                    borderTop: "1px solid rgba(212,175,55,0.5)",
-                    borderLeft: "1px solid rgba(212,175,55,0.5)",
-                    borderRadius: "4px 0 0 0",
-                  }} />
-                  {/* Corner accent marks — bottom-right */}
-                  <div className="absolute bottom-0 right-0 w-4 h-4 pointer-events-none" style={{
-                    borderBottom: "1px solid rgba(212,175,55,0.5)",
-                    borderRight: "1px solid rgba(212,175,55,0.5)",
-                    borderRadius: "0 0 4px 0",
-                  }} />
+                  {/* Corner registration marks */}
+                  {[
+                    "top-0 left-0 border-t border-l rounded-tl-sm",
+                    "top-0 right-0 border-t border-r rounded-tr-sm",
+                    "bottom-0 left-0 border-b border-l rounded-bl-sm",
+                    "bottom-0 right-0 border-b border-r rounded-br-sm",
+                  ].map((cls, i) => (
+                    <div key={i} className={`absolute w-3 h-3 pointer-events-none ${cls}`}
+                      style={{ borderColor: "rgba(212,175,55,0.45)" }} />
+                  ))}
                 </div>
 
-                {/* Caption — Persian, elegant */}
-                <div className="mt-6 flex flex-col items-center gap-1">
-                  <div className="w-8 h-[1px] bg-filmGold/30 mb-2" />
+                {/* Caption */}
+                <div className="mt-7 flex flex-col items-center">
+                  <div className="w-10 h-[1px] bg-filmGold/25 mb-3" />
                   <p
                     dir="rtl"
                     lang="fa"
-                    className="text-center text-filmIvory/50 leading-relaxed"
+                    className="text-center"
                     style={{
                       fontFamily: "'Noto Nastaliq Urdu', serif",
-                      fontSize: "0.78rem",
-                      maxWidth: "220px",
+                      fontSize: "0.82rem",
+                      lineHeight: "2.0",
+                      color: "rgba(255,247,236,0.45)",
+                      maxWidth: "240px",
                     }}
                   >
-                    پیش از اولین دیدار،<br />
-                    چیزی میان ما آغاز شده بود.
+                    پیش از اولین دیدار،<br />چیزی میان ما آغاز شده بود.
                   </p>
                 </div>
               </motion.div>
