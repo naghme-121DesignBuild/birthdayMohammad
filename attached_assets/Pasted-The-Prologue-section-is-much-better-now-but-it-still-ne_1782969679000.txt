@@ -1,0 +1,63 @@
+The Prologue section is much better now, but it still needs refinement to feel truly premium and cinematic.
+
+Please improve this section with the following changes:
+
+1. Remove the faint center placeholder text completely:
+- remove “Scene coming soon”
+- remove “Memories are still rendering...”
+This text makes the section feel unfinished.
+
+2. Improve the layout balance:
+- reduce the large empty space in the center
+- bring the text block and the video frame slightly closer together
+- use a more intentional 2-column layout, around 58% text / 42% video on desktop
+- keep good breathing room, but do not let the center feel dead
+
+3. Upgrade the video frame presentation:
+- keep the current archive/memory-frame concept
+- make the frame slightly larger and more premium
+- slightly increase its width so it feels less too-thin / too-skinny
+- keep rounded corners
+- use a very thin elegant border
+- deepen the shadow subtly
+- add a soft burgundy/gold ambient glow behind the frame
+- make it feel more luxurious and cinematic
+
+4. Replace or reduce the default browser video controls:
+- the native video controls look too generic
+- instead, show the video as a refined poster-like frame with a custom play button overlay
+- on click, either play inside the frame or open a clean cinematic lightbox/modal player
+- keep the interaction elegant and minimal
+
+5. Improve language consistency:
+- keep small labels like “PROLOGUE” and “ARCHIVE 01” in English if desired
+- but make the main heading, body text, poem, and caption Persian / RTL
+- the section should feel intentionally bilingual, not mixed randomly
+
+6. Improve the Persian poem styling:
+- present the poem as a refined quote block
+- add better spacing between lines
+- increase elegance of typography
+- use a subtle gold divider near it
+- make it feel like a poetic centerpiece, not just normal text under the paragraph
+
+7. Refine the caption under the video:
+- make it slightly more readable and elegant
+- center it under the frame
+- keep it subtle but not too tiny
+
+8. Improve the overall emotional hierarchy:
+- Label → Heading → body → poem → video → caption
+- the eye should flow naturally
+- the section should feel like a beautiful cinematic chapter opening
+
+Design style to preserve:
+- dark burgundy velvet background
+- gold accents
+- ivory main text
+- subtle film grain
+- luxurious, intimate, romantic, cinematic mood
+
+Do not make it overly decorative.
+Do not make it look like a generic video card.
+Keep it refined, warm, and expensive.

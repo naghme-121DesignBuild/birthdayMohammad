@@ -30,8 +30,10 @@ export default function VideoFrame({ src, poster, caption, title }: VideoFramePr
         <div className="pt-4 pb-4">
           {error || !src ? (
             <div className="aspect-video w-full flex flex-col items-center justify-center bg-filmBg2/30 text-center px-4">
-              <h3 className="font-display text-2xl md:text-3xl text-filmGold/60 mb-2">{title || "Scene coming soon"}</h3>
-              <p className="font-body italic text-filmIvory/40">Memories are still rendering...</p>
+              <div className="w-10 h-10 rounded-full border border-filmGold/20 flex items-center justify-center mb-3">
+                <span className="text-filmGold/30 text-lg ml-0.5">▶</span>
+              </div>
+              {title && <p className="font-ui text-xs tracking-widest text-filmGold/30 uppercase">{title}</p>}
             </div>
           ) : (
             <video
