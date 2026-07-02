@@ -440,8 +440,8 @@ export default function Home() {
 
                 {/* Main heading */}
                 <h2
-                  className="text-3xl sm:text-4xl md:text-5xl text-filmIvory leading-loose mb-6 max-w-lg"
-                  style={{ fontFamily: "'Vazirmatn', sans-serif", fontWeight: 500, lineHeight: "2" }}
+                  className="text-xl sm:text-2xl md:text-3xl text-filmIvory mb-6 max-w-sm"
+                  style={{ fontFamily: "'Vazirmatn', sans-serif", fontWeight: 500, lineHeight: "2.2", textAlign: "right" }}
                 >
                   پیش از آنکه همدیگر را ببینیم،<br />
                   قصه‌مان آرام آرام شروع شده بود.
