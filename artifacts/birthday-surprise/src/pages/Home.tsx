@@ -2,7 +2,6 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import ScrollProgress from "@/components/ScrollProgress";
-import MusicToggle from "@/components/MusicToggle";
 import SceneSection from "@/components/SceneSection";
 import VideoFrame from "@/components/VideoFrame";
 import FilmStrip from "@/components/FilmStrip";
@@ -168,7 +167,6 @@ export default function Home() {
   return (
     <div className="min-h-[100dvh] bg-filmBg text-filmIvory font-body overflow-x-hidden relative film-grain">
       <ScrollProgress />
-      {isOpen && <MusicToggle />}
 
       {/* GOLD SPARK TRANSITION OVERLAY */}
       <AnimatePresence>
