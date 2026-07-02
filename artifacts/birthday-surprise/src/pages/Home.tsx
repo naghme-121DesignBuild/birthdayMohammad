@@ -797,13 +797,6 @@ export default function Home() {
             <FilmStrip memories={memories} />
           </SceneSection>
 
-          {/* SECTION 7: Eight Frames */}
-          <SceneSection className="bg-filmBg relative overflow-visible">
-            <div className="absolute inset-0 bg-filmVignette pointer-events-none" />
-            <SceneLabel>Eight Frames</SceneLabel>
-            <h2 className="font-script text-5xl md:text-7xl text-filmGold mb-6">eight reasons I keep choosing you</h2>
-            <EightFrames frames={eightFrames} />
-          </SceneSection>
 
           {/* SECTION 8: Secret Scene */}
           <SceneSection className="bg-filmBlack flex flex-col items-center">
