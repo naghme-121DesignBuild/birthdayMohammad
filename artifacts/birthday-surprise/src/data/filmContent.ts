@@ -42,14 +42,14 @@ export const eightFrames = [
 ];
 
 export const memories = [
-  { src: "/assets/images/memory-1.jpg", caption: "جایی که قصه شروع شد" },
-  { src: "/assets/images/memory-2.jpg", caption: "اولین ردپاهای خاطره" },
-  { src: "/assets/images/memory-3.jpg", caption: "روزی که ساده بود، اما ماند" },
-  { src: "/assets/images/memory-4.jpg", caption: "خنده‌هایی که هنوز روشن‌اند" },
-  { src: "/assets/images/memory-5.jpg", caption: "کنار تو، معمولی‌ها هم قشنگ شدند" },
-  { src: "/assets/images/memory-6.jpg", caption: "یک قاب از ما" },
-  { src: "/assets/images/memory-7.jpg", caption: "شهری که شاهد ما بود" },
-  { src: "/assets/images/memory-8.jpg", caption: "چیزی که دلم نمی‌خواهد فراموش شود" },
+  { src: "/assets/images/memory-1.png", caption: "جایی که قصه شروع شد" },
+  { src: "/assets/images/memory-2.png", caption: "اولین ردپاهای خاطره" },
+  { src: "/assets/images/memory-3.png", caption: "روزی که ساده بود، اما ماند" },
+  { src: "/assets/images/memory-4.png", caption: "خنده‌هایی که هنوز روشن‌اند" },
+  { src: "/assets/images/memory-5.png", caption: "کنار تو، معمولی‌ها هم قشنگ شدند" },
+  { src: "/assets/images/memory-6.png", caption: "یک قاب از ما" },
+  { src: "/assets/images/memory-7.png", caption: "شهری که شاهد ما بود" },
+  { src: "/assets/images/memory-8.png", caption: "چیزی که دلم نمی‌خواهد فراموش شود" },
 ];
 
 export const voiceNotes = [
