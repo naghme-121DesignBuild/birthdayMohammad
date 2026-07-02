@@ -49,6 +49,35 @@ function SceneLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+function PrologueVideo() {
+  const [missing, setMissing] = useState(false);
+
+  if (missing) {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center">
+        <div className="w-10 h-10 rounded-full border border-filmGold/30 flex items-center justify-center">
+          <span className="text-filmGold/40 text-lg">▶</span>
+        </div>
+        <p className="font-ui text-[10px] tracking-widest text-filmGold/30 uppercase leading-relaxed">
+          Video coming<br />soon
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <video
+      src="/assets/videos/before-we-met-1.mp4"
+      controls
+      playsInline
+      preload="metadata"
+      className="absolute inset-0 w-full h-full object-cover"
+      onError={() => setMissing(true)}
+      style={{ paddingTop: "2rem" }}
+    />
+  );
+}
+
 export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpening, setIsOpening] = useState(false);
@@ -382,18 +411,73 @@ export default function Home() {
           </section>
 
           {/* SECTION 2: Prologue */}
-          <SceneSection className="bg-filmBlack">
-            <SceneLabel>{scenes.prologue.title}</SceneLabel>
-            <h2 className="font-display text-4xl md:text-5xl text-filmIvory mb-8">{scenes.prologue.subtitle}</h2>
-            <p className="font-body text-xl md:text-2xl text-filmIvory/80 leading-relaxed max-w-2xl text-justify mb-16">
-              {scenes.prologue.text}
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-              {scenes.prologue.videos.map((vid, i) => (
-                <VideoFrame key={i} src={vid.src} caption={vid.caption} title="Early Days" />
-              ))}
+          <section className="relative w-full py-24 px-4 overflow-hidden" style={{ background: "linear-gradient(135deg, #1a0510 0%, #2a0a1a 50%, #1a0510 100%)" }}>
+            {/* subtle grain — inherited from parent, add extra depth */}
+            <div className="absolute inset-0 pointer-events-none opacity-30" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(139,0,50,0.15) 0%, transparent 70%)" }} />
+
+            <div className="relative z-10 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-20">
+
+              {/* TEXT SIDE */}
+              <motion.div
+                className="flex-1 flex flex-col items-center md:items-start text-center md:text-left order-2 md:order-1"
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2 }}
+              >
+                <SceneLabel>Prologue</SceneLabel>
+                <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-filmIvory leading-tight mb-6 max-w-lg">
+                  Before we met, we were already becoming us.
+                </h2>
+                <div className="w-16 h-[1px] bg-filmGold/60 mb-6 mx-auto md:mx-0" />
+                <p className="font-body text-lg md:text-xl text-filmIvory/75 leading-relaxed max-w-md">
+                  Before we stood in the same city, there were calls, little videos, distance, laughter, and the strange feeling that something real was already beginning.
+                </p>
+              </motion.div>
+
+              {/* PHONE FRAME SIDE */}
+              <motion.div
+                className="flex-shrink-0 flex flex-col items-center order-1 md:order-2"
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: 0.2 }}
+              >
+                {/* Gold glow blob behind frame */}
+                <div className="absolute w-64 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(212,175,55,0.18) 0%, transparent 70%)" }} />
+
+                {/* Phone frame container */}
+                <div className="relative" style={{ width: "min(260px, 72vw)" }}>
+                  {/* Outer glow ring */}
+                  <div className="absolute -inset-3 rounded-[2.8rem] pointer-events-none" style={{ boxShadow: "0 0 40px 8px rgba(212,175,55,0.15), 0 0 80px 20px rgba(139,0,50,0.2)" }} />
+
+                  {/* Phone shell */}
+                  <div className="relative rounded-[2.5rem] border border-filmGold/40 overflow-hidden bg-filmBlack shadow-2xl"
+                    style={{ aspectRatio: "9/16", boxShadow: "inset 0 0 30px rgba(0,0,0,0.6), 0 20px 60px rgba(0,0,0,0.5)" }}>
+
+                    {/* Top notch */}
+                    <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-5 bg-filmBlack rounded-full z-10 border border-filmGold/20" />
+
+                    {/* Video or placeholder */}
+                    <PrologueVideo />
+
+                    {/* Inner frame shine */}
+                    <div className="absolute inset-0 pointer-events-none rounded-[2.5rem]" style={{ background: "linear-gradient(135deg, rgba(212,175,55,0.06) 0%, transparent 50%, rgba(0,0,0,0.2) 100%)" }} />
+                  </div>
+
+                  {/* Gold border accent lines */}
+                  <div className="absolute top-6 left-0 w-[2px] h-8 bg-filmGold/40 rounded-full" />
+                  <div className="absolute top-6 right-0 w-[2px] h-8 bg-filmGold/40 rounded-full" />
+                </div>
+
+                {/* Caption */}
+                <p className="mt-5 font-body italic text-filmGold/60 text-sm text-center max-w-[260px]">
+                  "Before the first real hug, there was this."
+                </p>
+              </motion.div>
+
             </div>
-          </SceneSection>
+          </section>
 
           {/* SECTION 3: Scene 1 */}
           <SceneSection className="bg-filmBg2">
