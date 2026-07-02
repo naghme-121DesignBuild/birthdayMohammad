@@ -50,64 +50,22 @@ function SceneLabel({ children }: { children: React.ReactNode }) {
 
 function PrologueVideo() {
   const [missing, setMissing] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  const vidRef = useRef<HTMLVideoElement>(null);
-
-  const handlePlay = () => {
-    if (!vidRef.current) return;
-    vidRef.current.play().then(() => setPlaying(true)).catch(() => {});
-  };
 
   if (missing) {
     return (
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-        <div className="w-14 h-14 rounded-full border border-filmGold/20 flex items-center justify-center">
-          <span className="text-filmGold/25 text-2xl ml-1">▶</span>
-        </div>
-      </div>
+      <div className="absolute inset-0 bg-filmBlack/60" />
     );
   }
 
   return (
-    <>
-      <video
-        ref={vidRef}
-        src="/assets/videos/before-we-met-1.mp4"
-        playsInline
-        preload="metadata"
-        controls={playing}
-        className="absolute inset-0 w-full h-full object-cover"
-        onError={() => setMissing(true)}
-        onEnded={() => setPlaying(false)}
-      />
-      <AnimatePresence>
-        {!playing && (
-          <motion.div
-            className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"
-            style={{ background: "linear-gradient(to bottom, rgba(13,0,5,0.3) 0%, rgba(13,0,5,0.1) 40%, rgba(13,0,5,0.55) 100%)" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            onClick={handlePlay}
-          >
-            <motion.div
-              className="w-16 h-16 rounded-full flex items-center justify-center"
-              style={{
-                background: "rgba(212,175,55,0.12)",
-                border: "1px solid rgba(212,175,55,0.5)",
-                boxShadow: "0 0 30px rgba(212,175,55,0.2)",
-              }}
-              animate={{ scale: [1, 1.06, 1] }}
-              transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-            >
-              <span className="text-filmGold text-2xl ml-1">▶</span>
-            </motion.div>
-            <p className="mt-4 font-ui text-[9px] tracking-[0.35em] text-filmGold/50 uppercase">Play memory</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+    <video
+      src="/assets/videos/before-we-met-1.mp4"
+      playsInline
+      preload="metadata"
+      controls
+      className="absolute inset-0 w-full h-full object-cover"
+      onError={() => setMissing(true)}
+    />
   );
 }
 
