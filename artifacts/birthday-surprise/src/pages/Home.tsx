@@ -430,12 +430,6 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.5, delay: 0.5 }}
               >
-                <p className="font-script text-4xl sm:text-5xl md:text-6xl text-filmGold mb-6">
-                  Happy Birthday, my love
-                </p>
-                <h2 className="font-display text-6xl sm:text-8xl md:text-9xl text-filmIvory drop-shadow-[0_0_30px_rgba(255,247,236,0.3)] tracking-tighter">
-                  {PARTNER_NAME}
-                </h2>
               </motion.div>
 
               <motion.div
@@ -445,14 +439,6 @@ export default function Home() {
                 className="w-[1px] bg-gradient-to-b from-filmGold to-transparent my-10"
               />
 
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1.5, delay: 2.5 }}
-                className="font-body italic text-filmIvory/70 text-xl sm:text-2xl max-w-lg"
-              >
-                Before the candles, before the noise — this is for you.
-              </motion.p>
             </div>
 
             <motion.div 
@@ -870,10 +856,6 @@ export default function Home() {
                 Deeply. Truly. Softly.
               </p>
               
-              <div className="flex flex-col items-center mt-12">
-                <p className="font-script text-3xl sm:text-4xl text-filmGold mb-2">Forever yours,</p>
-                <p className="font-display italic text-4xl sm:text-5xl text-filmGold">{SENDER_NAME}</p>
-              </div>
 
               <button 
                 onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
