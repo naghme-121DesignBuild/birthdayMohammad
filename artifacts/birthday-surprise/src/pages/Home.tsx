@@ -9,15 +9,15 @@ import EightFrames from "@/components/EightFrames";
 import Countdown from "@/components/Countdown";
 import EndCredits from "@/components/EndCredits";
 
-import { 
-  BIRTHDAY_DATE, 
-  PARTNER_NAME, 
-  SENDER_NAME, 
-  FILM_TITLE, 
-  scenes, 
-  eightFrames, 
-  memories as memoriesData, 
-  endCredits 
+import {
+  BIRTHDAY_DATE,
+  PARTNER_NAME,
+  SENDER_NAME,
+  FILM_TITLE,
+  scenes,
+  eightFrames,
+  memories as memoriesData,
+  endCredits,
 } from "@/data/filmContent";
 
 // Photos
@@ -27,7 +27,7 @@ import photo3 from "@assets/IMG_7541_1782879356204.PNG";
 import photo4 from "@assets/IMG_7543_1782879356204.PNG";
 import photo5 from "@assets/IMG_7544_1782879356205.PNG";
 
-const memories = memoriesData.map(m => {
+const memories = memoriesData.map((m) => {
   if (m.photo === "photo1") return { ...m, photo: photo1 };
   if (m.photo === "photo2") return { ...m, photo: photo2 };
   if (m.photo === "photo3") return { ...m, photo: photo3 };
@@ -40,112 +40,10 @@ function SceneLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 mb-6 opacity-70">
       <div className="w-8 h-[1px] bg-filmGold" />
-      <span className="font-ui text-xs tracking-[0.3em] uppercase text-filmGold">{children}</span>
+      <span className="font-ui text-xs tracking-[0.3em] uppercase text-filmGold">
+        {children}
+      </span>
       <div className="w-8 h-[1px] bg-filmGold" />
-    </div>
-  );
-}
-
-function RobotMascot() {
-  const vidRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef<number>(0);
-  const [missing, setMissing] = useState(false);
-
-  useEffect(() => {
-    const vid = vidRef.current;
-    const canvas = canvasRef.current;
-    if (!vid || !canvas) return;
-
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    if (!ctx) return;
-
-    function drawFrame() {
-      if (!vid || !canvas || !ctx || vid.paused || vid.ended) {
-        rafRef.current = requestAnimationFrame(drawFrame);
-        return;
-      }
-      const w = vid.videoWidth || 300;
-      const h = vid.videoHeight || 300;
-      if (canvas.width !== w) canvas.width = w;
-      if (canvas.height !== h) canvas.height = h;
-
-      ctx.drawImage(vid, 0, 0, w, h);
-      const frame = ctx.getImageData(0, 0, w, h);
-      const d = frame.data;
-      for (let i = 0; i < d.length; i += 4) {
-        const r = d[i], g = d[i + 1], b = d[i + 2];
-        // Chroma key: remove green screen pixels
-        if (g > 100 && g > r * 1.4 && g > b * 1.4) {
-          d[i + 3] = 0;
-        }
-      }
-      ctx.putImageData(frame, 0, 0);
-      rafRef.current = requestAnimationFrame(drawFrame);
-    }
-
-    const ensurePlay = () => {
-      if (!vid) return;
-      vid.currentTime = 0;
-      vid.play().catch(() => {});
-    };
-
-    vid.addEventListener("ended", ensurePlay);
-    vid.addEventListener("canplay", () => {
-      vid.play().catch(() => {
-        vid.muted = true;
-        vid.play().catch(() => {});
-      });
-      rafRef.current = requestAnimationFrame(drawFrame);
-    }, { once: true });
-
-    vid.muted = true;
-    vid.play().catch(() => {});
-    rafRef.current = requestAnimationFrame(drawFrame);
-
-    return () => {
-      vid.removeEventListener("ended", ensurePlay);
-      cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
-  if (missing) return null;
-
-  return (
-    <div style={{
-      position: "absolute",
-      top: "-64px",
-      left: "50%",
-      transform: "translateX(-50%)",
-      zIndex: 20,
-      pointerEvents: "none",
-      width: "clamp(60px, 8vw, 110px)",
-    }}>
-      {/* Hidden video source */}
-      <video
-        ref={vidRef}
-        src="/assets/videos/wooden-robot-loop.mp4"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        onError={() => setMissing(true)}
-        style={{ display: "none" }}
-      />
-      {/* Canvas renders chroma-keyed frames */}
-      <canvas
-        ref={canvasRef}
-        style={{
-          width: "100%",
-          height: "auto",
-          display: "block",
-          filter: [
-            "drop-shadow(0 6px 16px rgba(212,175,55,0.3))",
-            "drop-shadow(0 2px 8px rgba(80,0,25,0.45))",
-          ].join(" "),
-        }}
-      />
     </div>
   );
 }
@@ -154,9 +52,7 @@ function PrologueVideo() {
   const [missing, setMissing] = useState(false);
 
   if (missing) {
-    return (
-      <div className="absolute inset-0 bg-filmBlack/60" />
-    );
+    return <div className="absolute inset-0 bg-filmBlack/60" />;
   }
 
   return (
@@ -168,72 +64,6 @@ function PrologueVideo() {
       className="absolute inset-0 w-full h-full object-cover"
       onError={() => setMissing(true)}
     />
-  );
-}
-
-function PersonalMessageVideo() {
-  const [missing, setMissing] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  const vidRef = useRef<HTMLVideoElement>(null);
-
-  const handlePlay = () => {
-    if (!vidRef.current) return;
-    vidRef.current.play().then(() => setPlaying(true)).catch(() => {});
-  };
-
-  if (missing) {
-    return (
-      <div className="w-full aspect-video bg-filmBlack/60 flex items-center justify-center">
-        <div className="w-14 h-14 rounded-full border border-filmGold/20 flex items-center justify-center">
-          <span className="text-filmGold/25 text-2xl ml-1">▶</span>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative w-full">
-      <video
-        ref={vidRef}
-        src="/api/storage/public-objects/personal-message.MOV"
-        playsInline
-        preload="metadata"
-        controls={playing}
-        className="w-full object-contain block"
-        style={{ maxHeight: "80vh" }}
-        onError={() => setMissing(true)}
-        onEnded={() => setPlaying(false)}
-      />
-      <AnimatePresence>
-        {!playing && (
-          <motion.div
-            className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"
-            style={{
-              background: "linear-gradient(to bottom, rgba(8,0,2,0.25) 0%, rgba(8,0,2,0.05) 40%, rgba(8,0,2,0.5) 100%)",
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            onClick={handlePlay}
-          >
-            <motion.div
-              className="w-20 h-20 rounded-full flex items-center justify-center"
-              style={{
-                background: "rgba(212,175,55,0.1)",
-                border: "1px solid rgba(212,175,55,0.55)",
-                boxShadow: "0 0 40px rgba(212,175,55,0.2), inset 0 0 20px rgba(212,175,55,0.05)",
-              }}
-              animate={{ scale: [1, 1.06, 1] }}
-              transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }}
-            >
-              <span className="text-filmGold text-3xl ml-1.5">▶</span>
-            </motion.div>
-            <p className="mt-5 font-ui text-[9px] tracking-[0.4em] text-filmGold/50 uppercase">پخش</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
   );
 }
 
@@ -260,9 +90,12 @@ export default function Home() {
     if (!showVideo || !introVideoRef.current) return;
     const vid = introVideoRef.current;
     vid.muted = true;
-    vid.play().then(() => setVideoPlaying(true)).catch(() => {
-      // autoplay blocked — show play button overlay, user will tap
-    });
+    vid
+      .play()
+      .then(() => setVideoPlaying(true))
+      .catch(() => {
+        // autoplay blocked — show play button overlay, user will tap
+      });
   }, [showVideo]);
 
   const handlePlayVideo = () => {
@@ -270,7 +103,10 @@ export default function Home() {
     const vid = introVideoRef.current;
     vid.muted = false;
     setVideoMuted(false);
-    vid.play().then(() => setVideoPlaying(true)).catch(() => {});
+    vid
+      .play()
+      .then(() => setVideoPlaying(true))
+      .catch(() => {});
   };
 
   const handleUnmute = () => {
@@ -311,11 +147,16 @@ export default function Home() {
             <motion.div
               className="absolute inset-0"
               style={{
-                background: "radial-gradient(ellipse 60% 60% at 50% 50%, rgba(212,175,55,0.55) 0%, rgba(212,175,55,0.12) 50%, transparent 80%)",
+                background:
+                  "radial-gradient(ellipse 60% 60% at 50% 50%, rgba(212,175,55,0.55) 0%, rgba(212,175,55,0.12) 50%, transparent 80%)",
               }}
               initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: [0, 1, 0.6, 0] }}
-              transition={{ duration: 1.8, times: [0, 0.25, 0.6, 1], ease: "easeInOut" }}
+              transition={{
+                duration: 1.8,
+                times: [0, 0.25, 0.6, 1],
+                ease: "easeInOut",
+              }}
             />
             {/* Spark particles */}
             {Array.from({ length: 14 }).map((_, i) => {
@@ -334,7 +175,11 @@ export default function Home() {
                     opacity: [0, 1, 0],
                     scale: [0.5, 1.5, 0],
                   }}
-                  transition={{ duration: 1.1, delay: 0.1 + i * 0.03, ease: "easeOut" }}
+                  transition={{
+                    duration: 1.1,
+                    delay: 0.1 + i * 0.03,
+                    ease: "easeOut",
+                  }}
                 />
               );
             })}
@@ -351,13 +196,19 @@ export default function Home() {
             transition={{ duration: 0.8 }}
           >
             {/* vignette as its own non-interactive layer */}
-            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(circle, transparent 50%, rgba(10,0,4,0.8) 100%)" }} />
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(circle, transparent 50%, rgba(10,0,4,0.8) 100%)",
+              }}
+            />
             <div className="relative z-10 flex flex-col items-center text-center">
               <span className="font-ui text-xs tracking-[0.4em] text-filmGold/60 mb-6 uppercase">
                 A private film by {SENDER_NAME}
               </span>
-              
-              <motion.h1 
+
+              <motion.h1
                 className="font-display text-4xl sm:text-5xl md:text-7xl text-filmIvory tracking-tight mb-8 max-w-4xl"
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -366,24 +217,29 @@ export default function Home() {
                 {FILM_TITLE}
               </motion.h1>
 
-              <motion.div 
+              <motion.div
                 className="h-[1px] bg-filmGold shadow-[0_0_15px_rgba(212,175,55,0.5)] mb-8"
                 initial={{ width: 0 }}
-                animate={isOpening ? { width: "100%", opacity: 0 } : { width: "16rem" }}
-                transition={isOpening ? { duration: 0.8 } : { duration: 1, delay: 1 }}
+                animate={
+                  isOpening ? { width: "100%", opacity: 0 } : { width: "16rem" }
+                }
+                transition={
+                  isOpening ? { duration: 0.8 } : { duration: 1, delay: 1 }
+                }
               />
 
               {!isOpening && (
                 <>
-                  <motion.p 
+                  <motion.p
                     className="font-body italic text-filmGold/80 text-xl md:text-2xl max-w-xl mb-12"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1, delay: 1.5 }}
                   >
-                    for your birthday, and for all the moments that brought us here
+                    for your birthday, and for all the moments that brought us
+                    here
                   </motion.p>
-                  
+
                   <motion.button
                     onClick={handleOpen}
                     className="px-8 py-3 border border-filmGold text-filmGold font-ui tracking-[0.2em] text-sm uppercase hover:bg-filmGold hover:text-filmBlack transition-colors duration-500 rounded-sm focus:outline-none"
@@ -512,16 +368,15 @@ export default function Home() {
         <main className="w-full">
           {/* SECTION 1: Hero */}
           <section className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden px-4 film-vignette bg-gradient-to-b from-[#4a0d1c] to-filmBg">
-            
             <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
               {Array.from({ length: 7 }).map((_, i) => (
-                <div 
+                <div
                   key={i}
                   className="absolute w-32 h-32 rounded-full bg-filmGold/5 blur-3xl"
                   style={{
                     left: `${10 + Math.random() * 80}%`,
                     top: `${20 + Math.random() * 60}%`,
-                    animation: `floatOrb ${10 + Math.random() * 10}s infinite ease-in-out ${Math.random() * 5}s`
+                    animation: `floatOrb ${10 + Math.random() * 10}s infinite ease-in-out ${Math.random() * 5}s`,
                   }}
                 />
               ))}
@@ -532,8 +387,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.5, delay: 0.5 }}
-              >
-              </motion.div>
+              ></motion.div>
 
               <motion.div
                 initial={{ height: 0 }}
@@ -541,16 +395,17 @@ export default function Home() {
                 transition={{ duration: 1.5, delay: 1.5, ease: "easeInOut" }}
                 className="w-[1px] bg-gradient-to-b from-filmGold to-transparent my-10"
               />
-
             </div>
 
-            <motion.div 
+            <motion.div
               className="absolute bottom-10 flex flex-col items-center text-filmGold/50 animate-bounce"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 3.5, duration: 1 }}
             >
-              <span className="text-xs font-ui tracking-widest uppercase mb-2">Scroll</span>
+              <span className="text-xs font-ui tracking-widest uppercase mb-2">
+                Scroll
+              </span>
               <span>↓</span>
             </motion.div>
           </section>
@@ -558,16 +413,33 @@ export default function Home() {
           {/* SECTION 2: Prologue */}
           <section
             className="relative w-full overflow-hidden"
-            style={{ background: "linear-gradient(160deg, #180410 0%, #240815 40%, #1a0510 100%)" }}
+            style={{
+              background:
+                "linear-gradient(160deg, #180410 0%, #240815 40%, #1a0510 100%)",
+            }}
           >
             {/* Film grain texture layer */}
-            <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
-              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "180px" }} />
+            <div
+              className="absolute inset-0 pointer-events-none opacity-[0.04]"
+              style={{
+                backgroundImage:
+                  "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+                backgroundSize: "180px",
+              }}
+            />
             {/* Warm center glow */}
-            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 55% at 50% 50%, rgba(100,10,35,0.18) 0%, transparent 70%)" }} />
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(ellipse 70% 55% at 50% 50%, rgba(100,10,35,0.18) 0%, transparent 70%)",
+              }}
+            />
 
-            <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 pb-24 md:pb-32 flex flex-col md:flex-row items-center gap-10 md:gap-14" style={{ paddingTop: "0.2rem" }}>
-
+            <div
+              className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 pb-24 md:pb-32 flex flex-col md:flex-row items-center gap-10 md:gap-14"
+              style={{ paddingTop: "0.2rem" }}
+            >
               {/* ── TEXT SIDE (58%) ── */}
               <motion.div
                 className="w-full md:w-[58%] flex flex-col items-center md:items-start text-center md:text-left order-2 md:order-1 shrink-0"
@@ -579,7 +451,9 @@ export default function Home() {
                 {/* Label */}
                 <div className="flex items-center gap-3 mb-7 opacity-60 mx-auto md:mx-0">
                   <div className="w-8 h-[1px] bg-filmGold" />
-                  <span className="font-ui text-[9px] tracking-[0.45em] text-filmGold uppercase">Prologue</span>
+                  <span className="font-ui text-[9px] tracking-[0.45em] text-filmGold uppercase">
+                    Prologue
+                  </span>
                   <div className="w-8 h-[1px] bg-filmGold" />
                 </div>
 
@@ -598,8 +472,13 @@ export default function Home() {
                 {/* Poem — refined quote block */}
                 <div className="relative mx-auto md:mx-0 max-w-sm w-full">
                   {/* Left gold bar */}
-                  <div className="absolute left-0 top-0 bottom-0 w-[2px] rounded-full md:block hidden"
-                    style={{ background: "linear-gradient(to bottom, transparent, rgba(212,175,55,0.5), transparent)" }} />
+                  <div
+                    className="absolute left-0 top-0 bottom-0 w-[2px] rounded-full md:block hidden"
+                    style={{
+                      background:
+                        "linear-gradient(to bottom, transparent, rgba(212,175,55,0.5), transparent)",
+                    }}
+                  />
                   <blockquote
                     dir="rtl"
                     lang="fa"
@@ -627,49 +506,66 @@ export default function Home() {
                 transition={{ duration: 1.4, delay: 0.18, ease: "easeOut" }}
               >
                 {/* Ambient glow behind frame */}
-                <div className="absolute pointer-events-none" style={{
-                  width: "380px", height: "560px",
-                  background: "radial-gradient(ellipse 65% 75% at 50% 48%, rgba(139,0,50,0.3) 0%, rgba(212,175,55,0.07) 50%, transparent 72%)",
-                  filter: "blur(32px)",
-                }} />
+                <div
+                  className="absolute pointer-events-none"
+                  style={{
+                    width: "380px",
+                    height: "560px",
+                    background:
+                      "radial-gradient(ellipse 65% 75% at 50% 48%, rgba(139,0,50,0.3) 0%, rgba(212,175,55,0.07) 50%, transparent 72%)",
+                    filter: "blur(32px)",
+                  }}
+                />
 
                 {/* Archive label */}
                 <div className="flex items-center gap-2.5 mb-4 opacity-40">
                   <div className="w-5 h-[1px] bg-filmGold" />
-                  <span className="font-ui text-[8px] tracking-[0.5em] text-filmGold uppercase">Archive — 01</span>
+                  <span className="font-ui text-[8px] tracking-[0.5em] text-filmGold uppercase">
+                    Archive — 01
+                  </span>
                   <div className="w-5 h-[1px] bg-filmGold" />
                 </div>
 
                 {/* Frame wrapper */}
                 <div className="relative" style={{ width: "min(290px, 74vw)" }}>
-
                   {/* Ground shadow */}
-                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 pointer-events-none" style={{
-                    width: "75%", height: "50px",
-                    background: "rgba(0,0,0,0.6)",
-                    filter: "blur(22px)",
-                    borderRadius: "50%",
-                  }} />
+                  <div
+                    className="absolute -bottom-8 left-1/2 -translate-x-1/2 pointer-events-none"
+                    style={{
+                      width: "75%",
+                      height: "50px",
+                      background: "rgba(0,0,0,0.6)",
+                      filter: "blur(22px)",
+                      borderRadius: "50%",
+                    }}
+                  />
 
                   {/* The cinematic frame */}
-                  <div className="relative rounded-2xl overflow-hidden" style={{
-                    aspectRatio: "9/16",
-                    border: "1px solid rgba(212,175,55,0.28)",
-                    background: "#0a0003",
-                    boxShadow: [
-                      "0 0 0 1px rgba(255,247,236,0.03)",
-                      "inset 0 0 50px rgba(0,0,0,0.75)",
-                      "inset 0 1px 0 rgba(212,175,55,0.12)",
-                      "0 40px 100px rgba(0,0,0,0.65)",
-                      "0 12px 30px rgba(100,10,35,0.25)",
-                    ].join(", "),
-                  }}>
+                  <div
+                    className="relative rounded-2xl overflow-hidden"
+                    style={{
+                      aspectRatio: "9/16",
+                      border: "1px solid rgba(212,175,55,0.28)",
+                      background: "#0a0003",
+                      boxShadow: [
+                        "0 0 0 1px rgba(255,247,236,0.03)",
+                        "inset 0 0 50px rgba(0,0,0,0.75)",
+                        "inset 0 1px 0 rgba(212,175,55,0.12)",
+                        "0 40px 100px rgba(0,0,0,0.65)",
+                        "0 12px 30px rgba(100,10,35,0.25)",
+                      ].join(", "),
+                    }}
+                  >
                     <PrologueVideo />
 
                     {/* Glass sheen */}
-                    <div className="absolute inset-0 pointer-events-none" style={{
-                      background: "linear-gradient(145deg, rgba(255,247,236,0.06) 0%, rgba(255,247,236,0.01) 25%, transparent 50%)",
-                    }} />
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background:
+                          "linear-gradient(145deg, rgba(255,247,236,0.06) 0%, rgba(255,247,236,0.01) 25%, transparent 50%)",
+                      }}
+                    />
 
                     {/* Timestamp */}
                     <span className="absolute bottom-2.5 right-3 font-ui text-[8px] tracking-[0.3em] text-filmGold/25 pointer-events-none select-none">
@@ -684,8 +580,11 @@ export default function Home() {
                     "bottom-0 left-0 border-b border-l rounded-bl-sm",
                     "bottom-0 right-0 border-b border-r rounded-br-sm",
                   ].map((cls, i) => (
-                    <div key={i} className={`absolute w-3 h-3 pointer-events-none ${cls}`}
-                      style={{ borderColor: "rgba(212,175,55,0.45)" }} />
+                    <div
+                      key={i}
+                      className={`absolute w-3 h-3 pointer-events-none ${cls}`}
+                      style={{ borderColor: "rgba(212,175,55,0.45)" }}
+                    />
                   ))}
                 </div>
 
@@ -704,27 +603,40 @@ export default function Home() {
                       maxWidth: "240px",
                     }}
                   >
-                    پیش از اولین دیدار،<br />چیزی میان ما آغاز شده بود.
+                    پیش از اولین دیدار،
+                    <br />
+                    چیزی میان ما آغاز شده بود.
                   </p>
                 </div>
               </motion.div>
-
             </div>
           </section>
 
           {/* SECTION 3: Scene 1 — Personal Message */}
           <section
             className="relative w-full overflow-hidden"
-            style={{ background: "linear-gradient(160deg, #120008 0%, #1c0610 50%, #120008 100%)" }}
+            style={{
+              background:
+                "linear-gradient(160deg, #120008 0%, #1c0610 50%, #120008 100%)",
+            }}
           >
-            <div className="absolute inset-0 pointer-events-none opacity-[0.035]"
-              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "180px" }} />
-            <div className="absolute inset-0 pointer-events-none" style={{
-              background: "radial-gradient(ellipse 70% 55% at 50% 30%, rgba(139,0,50,0.12) 0%, transparent 65%)",
-            }} />
+            <div
+              className="absolute inset-0 pointer-events-none opacity-[0.035]"
+              style={{
+                backgroundImage:
+                  "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+                backgroundSize: "180px",
+              }}
+            />
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(ellipse 70% 55% at 50% 30%, rgba(139,0,50,0.12) 0%, transparent 65%)",
+              }}
+            />
 
             <div className="relative z-10 max-w-4xl mx-auto px-6 md:px-12 py-20 md:py-28 flex flex-col items-center">
-
               {/* Scene label */}
               <motion.div
                 className="flex items-center gap-3 mb-10 opacity-50"
@@ -734,7 +646,9 @@ export default function Home() {
                 transition={{ duration: 1 }}
               >
                 <div className="w-10 h-[1px] bg-filmGold" />
-                <span className="font-ui text-[9px] tracking-[0.5em] text-filmGold uppercase">Scene 1</span>
+                <span className="font-ui text-[9px] tracking-[0.5em] text-filmGold uppercase">
+                  Scene 1
+                </span>
                 <div className="w-10 h-[1px] bg-filmGold" />
               </motion.div>
 
@@ -793,116 +707,46 @@ export default function Home() {
                 <p>با نگاه،</p>
                 <p>با همان لرز کوچکی که آدم وقتی از دلش حرف می‌زند، دارد.</p>
               </motion.div>
-
-              {/* Personal video frame */}
-              <motion.div
-                className="w-full flex flex-col items-center"
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.4, delay: 0.3, ease: "easeOut" }}
-              >
-                {/* Ambient glow */}
-                <div className="absolute pointer-events-none" style={{
-                  width: "600px", height: "400px",
-                  background: "radial-gradient(ellipse, rgba(139,0,50,0.2) 0%, rgba(212,175,55,0.05) 50%, transparent 70%)",
-                  filter: "blur(40px)",
-                }} />
-
-                {/* Frame container — flexible for any aspect ratio */}
-                <div className="relative w-full max-w-2xl">
-
-                  {/* Robot mascot perched above the personal message frame */}
-                  <RobotMascot />
-
-                  {/* Ground shadow */}
-                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 pointer-events-none" style={{
-                    width: "70%", height: "60px",
-                    background: "rgba(0,0,0,0.55)",
-                    filter: "blur(24px)",
-                    borderRadius: "50%",
-                  }} />
-
-                  {/* The cinematic frame */}
-                  <div
-                    className="relative rounded-xl overflow-hidden"
-                    style={{
-                      border: "1px solid rgba(212,175,55,0.25)",
-                      background: "#080002",
-                      boxShadow: [
-                        "0 0 0 1px rgba(255,247,236,0.025)",
-                        "inset 0 0 60px rgba(0,0,0,0.8)",
-                        "inset 0 1px 0 rgba(212,175,55,0.1)",
-                        "0 40px 100px rgba(0,0,0,0.7)",
-                        "0 12px 40px rgba(100,10,35,0.3)",
-                      ].join(", "),
-                    }}
-                  >
-                    <PersonalMessageVideo />
-
-                    {/* Glass sheen */}
-                    <div className="absolute inset-0 pointer-events-none" style={{
-                      background: "linear-gradient(145deg, rgba(255,247,236,0.05) 0%, rgba(255,247,236,0.01) 20%, transparent 45%)",
-                    }} />
-                  </div>
-
-                  {/* Corner marks */}
-                  {[
-                    "top-0 left-0 border-t border-l rounded-tl",
-                    "top-0 right-0 border-t border-r rounded-tr",
-                    "bottom-0 left-0 border-b border-l rounded-bl",
-                    "bottom-0 right-0 border-b border-r rounded-br",
-                  ].map((cls, i) => (
-                    <div key={i} className={`absolute w-4 h-4 pointer-events-none ${cls}`}
-                      style={{ borderColor: "rgba(212,175,55,0.4)" }} />
-                  ))}
-                </div>
-
-                {/* Caption */}
-                <div className="mt-8 flex flex-col items-center">
-                  <div className="w-12 h-[1px] bg-filmGold/25 mb-4" />
-                  <p
-                    dir="rtl"
-                    lang="fa"
-                    className="text-center"
-                    style={{
-                      fontFamily: "'Noto Nastaliq Urdu', serif",
-                      fontSize: "0.85rem",
-                      lineHeight: 2.2,
-                      color: "rgba(255,247,236,0.4)",
-                    }}
-                  >
-                    برای تو، بی‌واسطه‌تر از هر نوشته‌ای.
-                  </p>
-                </div>
-              </motion.div>
-
             </div>
           </section>
-
 
           {/* SECTION 6: Memory Montage — scattered collage */}
           {(() => {
             const SCATTER = [
-              { rotate: -2.5, mt: 0,  size: "normal" },
-              { rotate:  1.5, mt: 28, size: "wide"   },
-              { rotate: -1.0, mt: 8,  size: "normal" },
-              { rotate:  3.0, mt: 40, size: "normal" },
-              { rotate: -3.0, mt: 4,  size: "wide"   },
-              { rotate:  2.0, mt: 20, size: "normal" },
+              { rotate: -2.5, mt: 0, size: "normal" },
+              { rotate: 1.5, mt: 28, size: "wide" },
+              { rotate: -1.0, mt: 8, size: "normal" },
+              { rotate: 3.0, mt: 40, size: "normal" },
+              { rotate: -3.0, mt: 4, size: "wide" },
+              { rotate: 2.0, mt: 20, size: "normal" },
               { rotate: -1.5, mt: 36, size: "normal" },
-              { rotate:  2.5, mt: 12, size: "normal" },
+              { rotate: 2.5, mt: 12, size: "normal" },
             ];
             return (
               <section
                 className="relative w-full overflow-hidden"
-                style={{ background: "linear-gradient(160deg, #170006 0%, #1e0810 50%, #170006 100%)" }}
+                style={{
+                  background:
+                    "linear-gradient(160deg, #170006 0%, #1e0810 50%, #170006 100%)",
+                }}
               >
                 {/* Film grain */}
-                <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
-                  style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "180px" }} />
+                <div
+                  className="absolute inset-0 pointer-events-none opacity-[0.04]"
+                  style={{
+                    backgroundImage:
+                      "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+                    backgroundSize: "180px",
+                  }}
+                />
                 {/* Warm center glow */}
-                <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(120,15,40,0.14) 0%, transparent 70%)" }} />
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background:
+                      "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(120,15,40,0.14) 0%, transparent 70%)",
+                  }}
+                />
 
                 <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 py-20 md:py-28">
                   {/* Header */}
@@ -915,18 +759,26 @@ export default function Home() {
                   >
                     <div className="flex items-center gap-3 mb-6 opacity-50">
                       <div className="w-8 h-[1px] bg-filmGold" />
-                      <span className="font-ui text-[9px] tracking-[0.5em] text-filmGold uppercase">Montage</span>
+                      <span className="font-ui text-[9px] tracking-[0.5em] text-filmGold uppercase">
+                        Montage
+                      </span>
                       <div className="w-8 h-[1px] bg-filmGold" />
                     </div>
                     <h2
-                      dir="rtl" lang="fa"
+                      dir="rtl"
+                      lang="fa"
                       className="font-display mb-3"
-                      style={{ fontSize: "clamp(1.8rem, 5vw, 3rem)", color: "rgba(255,247,236,0.95)", lineHeight: 1.4 }}
+                      style={{
+                        fontSize: "clamp(1.8rem, 5vw, 3rem)",
+                        color: "rgba(255,247,236,0.95)",
+                        lineHeight: 1.4,
+                      }}
                     >
                       تکه‌هایی از ما
                     </h2>
                     <p
-                      dir="rtl" lang="fa"
+                      dir="rtl"
+                      lang="fa"
                       style={{
                         fontFamily: "'Noto Nastaliq Urdu', serif",
                         fontSize: "clamp(0.9rem, 2vw, 1.15rem)",
@@ -950,7 +802,11 @@ export default function Home() {
                           initial={{ opacity: 0, y: 24, rotate: 0 }}
                           whileInView={{ opacity: 1, y: 0, rotate: s.rotate }}
                           viewport={{ once: true, margin: "-60px" }}
-                          transition={{ duration: 1.0, delay: i * 0.08, ease: "easeOut" }}
+                          transition={{
+                            duration: 1.0,
+                            delay: i * 0.08,
+                            ease: "easeOut",
+                          }}
                           whileHover={{ scale: 1.03, rotate: 0, zIndex: 10 }}
                           onClick={() => setMontageIdx(i)}
                         >
@@ -970,20 +826,31 @@ export default function Home() {
                             }}
                           >
                             {/* Photo */}
-                            <div className="overflow-hidden" style={{ borderRadius: "2px", background: "#080002" }}>
+                            <div
+                              className="overflow-hidden"
+                              style={{
+                                borderRadius: "2px",
+                                background: "#080002",
+                              }}
+                            >
                               <img
                                 src={mem.src}
                                 alt={mem.caption}
                                 className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.04]"
-                                style={{ objectFit: "contain", display: "block" }}
+                                style={{
+                                  objectFit: "contain",
+                                  display: "block",
+                                }}
                                 onError={(e) => {
-                                  (e.target as HTMLImageElement).style.opacity = "0.1";
+                                  (e.target as HTMLImageElement).style.opacity =
+                                    "0.1";
                                 }}
                               />
                             </div>
                             {/* Caption below photo */}
                             <p
-                              dir="rtl" lang="fa"
+                              dir="rtl"
+                              lang="fa"
                               className="mt-3 text-center"
                               style={{
                                 fontFamily: "'Noto Nastaliq Urdu', serif",
@@ -1016,11 +883,21 @@ export default function Home() {
                       <button
                         onClick={() => setMontageIdx(null)}
                         className="absolute top-6 right-6 text-filmIvory/40 hover:text-filmGold text-3xl focus:outline-none z-10 transition-colors"
-                      >✕</button>
+                      >
+                        ✕
+                      </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); setMontageIdx(((montageIdx - 1) + memories.length) % memories.length); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMontageIdx(
+                            (montageIdx - 1 + memories.length) %
+                              memories.length,
+                          );
+                        }}
                         className="absolute left-4 text-filmGold/30 hover:text-filmGold text-5xl focus:outline-none transition-colors hidden sm:block"
-                      >‹</button>
+                      >
+                        ‹
+                      </button>
                       <motion.div
                         key={montageIdx}
                         initial={{ opacity: 0, scale: 0.93 }}
@@ -1041,7 +918,8 @@ export default function Home() {
                           }}
                         />
                         <p
-                          dir="rtl" lang="fa"
+                          dir="rtl"
+                          lang="fa"
                           className="mt-6 text-center"
                           style={{
                             fontFamily: "'Noto Nastaliq Urdu', serif",
@@ -1049,12 +927,19 @@ export default function Home() {
                             lineHeight: 2.2,
                             color: "rgba(212,175,55,0.65)",
                           }}
-                        >{memories[montageIdx].caption}</p>
+                        >
+                          {memories[montageIdx].caption}
+                        </p>
                       </motion.div>
                       <button
-                        onClick={(e) => { e.stopPropagation(); setMontageIdx((montageIdx + 1) % memories.length); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMontageIdx((montageIdx + 1) % memories.length);
+                        }}
                         className="absolute right-4 text-filmGold/30 hover:text-filmGold text-5xl focus:outline-none transition-colors hidden sm:block"
-                      >›</button>
+                      >
+                        ›
+                      </button>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -1062,16 +947,17 @@ export default function Home() {
             );
           })()}
 
-
-
           {/* SECTION 9: Countdown */}
           <SceneSection className="bg-filmBg2 border-t border-filmGold/20">
             <SceneLabel>Premiere Night</SceneLabel>
-            <h2 className="font-display text-4xl md:text-5xl text-filmIvory mb-4">Counting down to your birthday</h2>
-            <p className="font-body italic text-2xl text-filmGold/80 mb-8">Every second brings me closer to celebrating you.</p>
+            <h2 className="font-display text-4xl md:text-5xl text-filmIvory mb-4">
+              Counting down to your birthday
+            </h2>
+            <p className="font-body italic text-2xl text-filmGold/80 mb-8">
+              Every second brings me closer to celebrating you.
+            </p>
             <Countdown targetDate={BIRTHDAY_DATE} />
           </SceneSection>
-
 
           {/* SECTION 11: End Credits */}
           <EndCredits credits={endCredits} />
