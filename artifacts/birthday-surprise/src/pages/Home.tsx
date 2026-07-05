@@ -67,6 +67,176 @@ function PrologueVideo() {
   );
 }
 
+function RobotMascot() {
+  const vidRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rafRef = useRef<number>(0);
+  const [missing, setMissing] = useState(false);
+
+  useEffect(() => {
+    const vid = vidRef.current;
+    const canvas = canvasRef.current;
+    if (!vid || !canvas) return;
+
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return;
+
+    function drawFrame() {
+      if (!vid || !canvas || !ctx || vid.paused || vid.ended) {
+        rafRef.current = requestAnimationFrame(drawFrame);
+        return;
+      }
+      const w = vid.videoWidth || 300;
+      const h = vid.videoHeight || 300;
+      if (canvas.width !== w) canvas.width = w;
+      if (canvas.height !== h) canvas.height = h;
+
+      ctx.drawImage(vid, 0, 0, w, h);
+      const frame = ctx.getImageData(0, 0, w, h);
+      const d = frame.data;
+      for (let i = 0; i < d.length; i += 4) {
+        const r = d[i], g = d[i + 1], b = d[i + 2];
+        // Chroma key: remove green screen pixels
+        if (g > 100 && g > r * 1.4 && g > b * 1.4) {
+          d[i + 3] = 0;
+        }
+      }
+      ctx.putImageData(frame, 0, 0);
+      rafRef.current = requestAnimationFrame(drawFrame);
+    }
+
+    const ensurePlay = () => {
+      if (!vid) return;
+      vid.currentTime = 0;
+      vid.play().catch(() => {});
+    };
+
+    vid.addEventListener("ended", ensurePlay);
+    vid.addEventListener("canplay", () => {
+      vid.play().catch(() => {
+        vid.muted = true;
+        vid.play().catch(() => {});
+      });
+      rafRef.current = requestAnimationFrame(drawFrame);
+    }, { once: true });
+
+    vid.muted = true;
+    vid.play().catch(() => {});
+    rafRef.current = requestAnimationFrame(drawFrame);
+
+    return () => {
+      vid.removeEventListener("ended", ensurePlay);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  if (missing) return null;
+
+  return (
+    <div style={{
+      position: "absolute",
+      top: "-64px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      zIndex: 20,
+      pointerEvents: "none",
+      width: "clamp(60px, 8vw, 110px)",
+    }}>
+      {/* Hidden video source */}
+      <video
+        ref={vidRef}
+        src="/assets/videos/wooden-robot-loop.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        onError={() => setMissing(true)}
+        style={{ display: "none" }}
+      />
+      {/* Canvas renders chroma-keyed frames */}
+      <canvas
+        ref={canvasRef}
+        style={{
+          width: "100%",
+          height: "auto",
+          display: "block",
+          filter: [
+            "drop-shadow(0 6px 16px rgba(212,175,55,0.3))",
+            "drop-shadow(0 2px 8px rgba(80,0,25,0.45))",
+          ].join(" "),
+        }}
+      />
+    </div>
+  );
+}
+
+function PersonalMessageVideo() {
+  const [missing, setMissing] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const vidRef = useRef<HTMLVideoElement>(null);
+
+  const handlePlay = () => {
+    if (!vidRef.current) return;
+    vidRef.current.play().then(() => setPlaying(true)).catch(() => {});
+  };
+
+  if (missing) {
+    return (
+      <div className="w-full aspect-video bg-filmBlack/60 flex items-center justify-center">
+        <div className="w-14 h-14 rounded-full border border-filmGold/20 flex items-center justify-center">
+          <span className="text-filmGold/25 text-2xl ml-1">▶</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full">
+      <video
+        ref={vidRef}
+        src="/api/storage/public-objects/personal-message.MOV"
+        playsInline
+        preload="metadata"
+        controls={playing}
+        className="w-full object-contain block"
+        style={{ maxHeight: "80vh" }}
+        onError={() => setMissing(true)}
+        onEnded={() => setPlaying(false)}
+      />
+      <AnimatePresence>
+        {!playing && (
+          <motion.div
+            className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"
+            style={{
+              background: "linear-gradient(to bottom, rgba(8,0,2,0.25) 0%, rgba(8,0,2,0.05) 40%, rgba(8,0,2,0.5) 100%)",
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            onClick={handlePlay}
+          >
+            <motion.div
+              className="w-20 h-20 rounded-full flex items-center justify-center"
+              style={{
+                background: "rgba(212,175,55,0.1)",
+                border: "1px solid rgba(212,175,55,0.55)",
+                boxShadow: "0 0 40px rgba(212,175,55,0.2), inset 0 0 20px rgba(212,175,55,0.05)",
+              }}
+              animate={{ scale: [1, 1.06, 1] }}
+              transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }}
+            >
+              <span className="text-filmGold text-3xl ml-1.5">▶</span>
+            </motion.div>
+            <p className="mt-5 font-ui text-[9px] tracking-[0.4em] text-filmGold/50 uppercase">پخش</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpening, setIsOpening] = useState(false);
@@ -707,6 +877,90 @@ export default function Home() {
                 <p>با نگاه،</p>
                 <p>با همان لرز کوچکی که آدم وقتی از دلش حرف می‌زند، دارد.</p>
               </motion.div>
+
+              {/* Personal video frame */}
+              <motion.div
+                className="w-full flex flex-col items-center"
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.4, delay: 0.3, ease: "easeOut" }}
+              >
+                {/* Ambient glow */}
+                <div className="absolute pointer-events-none" style={{
+                  width: "600px", height: "400px",
+                  background: "radial-gradient(ellipse, rgba(139,0,50,0.2) 0%, rgba(212,175,55,0.05) 50%, transparent 70%)",
+                  filter: "blur(40px)",
+                }} />
+
+                {/* Frame container — flexible for any aspect ratio */}
+                <div className="relative w-full max-w-2xl">
+
+                  {/* Robot mascot perched above the personal message frame */}
+                  <RobotMascot />
+
+                  {/* Ground shadow */}
+                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 pointer-events-none" style={{
+                    width: "70%", height: "60px",
+                    background: "rgba(0,0,0,0.55)",
+                    filter: "blur(24px)",
+                    borderRadius: "50%",
+                  }} />
+
+                  {/* The cinematic frame */}
+                  <div
+                    className="relative rounded-xl overflow-hidden"
+                    style={{
+                      border: "1px solid rgba(212,175,55,0.25)",
+                      background: "#080002",
+                      boxShadow: [
+                        "0 0 0 1px rgba(255,247,236,0.025)",
+                        "inset 0 0 60px rgba(0,0,0,0.8)",
+                        "inset 0 1px 0 rgba(212,175,55,0.1)",
+                        "0 40px 100px rgba(0,0,0,0.7)",
+                        "0 12px 40px rgba(100,10,35,0.3)",
+                      ].join(", "),
+                    }}
+                  >
+                    <PersonalMessageVideo />
+
+                    {/* Glass sheen */}
+                    <div className="absolute inset-0 pointer-events-none" style={{
+                      background: "linear-gradient(145deg, rgba(255,247,236,0.05) 0%, rgba(255,247,236,0.01) 20%, transparent 45%)",
+                    }} />
+                  </div>
+
+                  {/* Corner marks */}
+                  {[
+                    "top-0 left-0 border-t border-l rounded-tl",
+                    "top-0 right-0 border-t border-r rounded-tr",
+                    "bottom-0 left-0 border-b border-l rounded-bl",
+                    "bottom-0 right-0 border-b border-r rounded-br",
+                  ].map((cls, i) => (
+                    <div key={i} className={`absolute w-4 h-4 pointer-events-none ${cls}`}
+                      style={{ borderColor: "rgba(212,175,55,0.4)" }} />
+                  ))}
+                </div>
+
+                {/* Caption */}
+                <div className="mt-8 flex flex-col items-center">
+                  <div className="w-12 h-[1px] bg-filmGold/25 mb-4" />
+                  <p
+                    dir="rtl"
+                    lang="fa"
+                    className="text-center"
+                    style={{
+                      fontFamily: "'Noto Nastaliq Urdu', serif",
+                      fontSize: "0.85rem",
+                      lineHeight: 2.2,
+                      color: "rgba(255,247,236,0.4)",
+                    }}
+                  >
+                    برای تو، بی‌واسطه‌تر از هر نوشته‌ای.
+                  </p>
+                </div>
+              </motion.div>
+
             </div>
           </section>
 
