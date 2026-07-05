@@ -1,0 +1,2 @@
+- [Large video assets and Git LFS](large-video-assets-lfs.md) — LFS-tracked video files can silently ship as pointer stubs in deployments; the platform's checkpoint system re-adds LFS tracking automatically, so untracking isn't viable — use Object Storage instead.
+- [Video MIME type for browser playback](video-mime-type-playback.md) — Chrome refuses to play `<video>` sources served with `Content-Type: video/quicktime`, even with H.264/AAC content; serve as `video/mp4` instead.
