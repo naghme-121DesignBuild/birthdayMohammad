@@ -195,7 +195,7 @@ function PersonalMessageVideo() {
     <div className="relative w-full">
       <video
         ref={vidRef}
-        src="/assets/videos/personal-message.mp4"
+        src="/assets/videos/personal-message.MOV"
         playsInline
         preload="metadata"
         controls={playing}
