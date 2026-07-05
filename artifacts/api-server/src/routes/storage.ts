@@ -5,6 +5,13 @@ import { ObjectStorageService } from "../lib/objectStorage";
 const router: IRouter = Router();
 const objectStorageService = new ObjectStorageService();
 
+// Cap every response body to this size, even for unranged/open-ended range
+// requests. Some proxy layers in front of this server are unreliable when
+// streaming very large single responses (observed failures streaming a
+// ~79MB video in one shot), so we always force clients into multiple
+// range requests for large files instead.
+const MAX_CHUNK_SIZE = 4 * 1024 * 1024; // 4MB
+
 /**
  * GET /storage/public-objects/*
  *
@@ -21,16 +28,27 @@ router.get("/storage/public-objects/*filePath", async (req: Request, res: Respon
       return;
     }
 
-    let range: { start: number; end: number } | undefined;
+    const [metadata] = await file.getMetadata();
+    const totalSize = Number(metadata.size ?? 0);
+
+    let start = 0;
+    let end = totalSize ? totalSize - 1 : 0;
     const rangeHeader = req.headers.range;
     if (rangeHeader) {
-      const [metadata] = await file.getMetadata();
-      const totalSize = Number(metadata.size ?? 0);
       const match = /bytes=(\d*)-(\d*)/.exec(rangeHeader);
       if (match && totalSize) {
-        const start = match[1] ? parseInt(match[1], 10) : 0;
-        const end = match[2] ? parseInt(match[2], 10) : totalSize - 1;
-        range = { start, end: Math.min(end, totalSize - 1) };
+        start = match[1] ? parseInt(match[1], 10) : 0;
+        end = match[2] ? parseInt(match[2], 10) : totalSize - 1;
+        end = Math.min(end, totalSize - 1);
+      }
+    }
+
+    let range: { start: number; end: number } | undefined;
+    if (totalSize) {
+      const requestedLength = end - start + 1;
+      if (rangeHeader || requestedLength > MAX_CHUNK_SIZE) {
+        const cappedEnd = Math.min(end, start + MAX_CHUNK_SIZE - 1);
+        range = { start, end: cappedEnd };
       }
     }
 
