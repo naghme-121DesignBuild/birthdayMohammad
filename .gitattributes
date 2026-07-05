@@ -1,2 +1,0 @@
-artifacts/birthday-surprise/public/assets/videos/personal-message.mp4 filter=lfs diff=lfs merge=lfs -text
-artifacts/birthday-surprise/public/assets/videos/personal-message.MOV filter=lfs diff=lfs merge=lfs -text
