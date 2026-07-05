@@ -6,7 +6,6 @@ import SceneSection from "@/components/SceneSection";
 import VideoFrame from "@/components/VideoFrame";
 import FilmStrip from "@/components/FilmStrip";
 import EightFrames from "@/components/EightFrames";
-import VoiceoverPlayer from "@/components/VoiceoverPlayer";
 import Countdown from "@/components/Countdown";
 import EndCredits from "@/components/EndCredits";
 
@@ -18,7 +17,6 @@ import {
   scenes, 
   eightFrames, 
   memories as memoriesData, 
-  voiceNotes, 
   endCredits 
 } from "@/data/filmContent";
 
@@ -882,20 +880,6 @@ export default function Home() {
             </div>
           </section>
 
-
-          {/* SECTION 5: Voiceover Interlude */}
-          <SceneSection className="bg-filmBlack border-y border-filmGold/10">
-            <SceneLabel>Voiceover</SceneLabel>
-            <h2 className="font-display italic text-3xl md:text-5xl text-filmGold mb-8">The things I say better when the world is quiet</h2>
-            <p className="font-body text-xl md:text-2xl text-filmIvory/80 max-w-2xl text-center mb-16 italic">
-              "I wanted this part to feel like my voice sitting beside you."
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
-              {voiceNotes.map((note, i) => (
-                <VoiceoverPlayer key={i} label={note.label} src={note.src} />
-              ))}
-            </div>
-          </SceneSection>
 
           {/* SECTION 6: Memory Montage — scattered collage */}
           {(() => {
